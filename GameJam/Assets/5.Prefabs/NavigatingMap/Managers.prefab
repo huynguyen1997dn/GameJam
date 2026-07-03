@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7607792959659206345}
-  - component: {fileID: 5468097389805034406}
   - component: {fileID: 2248836632683824641}
   - component: {fileID: 8507397546933936497}
+  - component: {fileID: 3368176623567264053}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -34,20 +34,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5468097389805034406
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6791438253946041323}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d757fd173f34740ce96fa3e7d3baa500, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomPlaceholderStub
-  autoSolveAndReturn: 1
-  autoSolveDelay: 1
 --- !u!114 &2248836632683824641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,3 +60,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30964e45370a14733a689888a50e5f08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameStateManager
+--- !u!114 &3368176623567264053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6791438253946041323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ec34ba037a014e0898af1b177c7f92d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MiniGameRoomBridge
+  mappings:
+  - nodeId: Forest
+    game: 0
+  - nodeId: ElderHouse
+    game: 3
+  - nodeId: CivilHome
+    game: 4
+  miniGameContainer: {fileID: 0}
