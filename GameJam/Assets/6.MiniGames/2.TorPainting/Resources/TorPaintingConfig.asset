@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TorPaintingConfig
   m_EditorClassIdentifier: Assembly-CSharp::TorPaintingConfig
   sourceSprite: {fileID: -7066466376193332852, guid: 374f30f10f1164bc889e24318ab70c18, type: 3}
-  pieceCount: 12
+  pieceCount: 9
   piecePrefab: {fileID: 2627688731880984654, guid: b7239d0b3160e444da74ab99ab65db38, type: 3}
   puzzleSize: 6
   scatterRadius: 4

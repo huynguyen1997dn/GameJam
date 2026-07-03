@@ -40,6 +40,9 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     [SerializeField] private float buildDuration = 1.5f;
     [SerializeField] private string buildBlockedMessage = "Need X woods"; // placeholder notification text
 
+    [Header("Day Availability")]
+    public int availableFromDay = 1; // fully hidden until DayManager reaches this day
+
     [Header("Movement")]
     public Waypoint destinationWaypoint; // where the character stands for this node
 
@@ -48,6 +51,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     [SerializeField] private Color hoverTint = new Color(1f, 0.95f, 0.75f);
 
     private SpriteRenderer _spriteRenderer;
+    private Collider2D _collider;
     private Vector3 _baseScale;
     private Color _baseColor;
     private bool _isHovered;
@@ -56,6 +60,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _collider = GetComponent<Collider2D>(); // null on cosmetic nodes
         _baseScale = transform.localScale;
         if (_spriteRenderer != null) _baseColor = _spriteRenderer.color;
     }
@@ -64,6 +69,8 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         var gsm = GameStateManager.Instance;
         if (gsm != null) gsm.OnNodeStateChanged += HandleNodeStateChanged;
+        var dm = DayManager.Instance;
+        if (dm != null) dm.OnDayChanged += HandleDayChanged;
         RefreshVisual();
     }
 
@@ -71,6 +78,8 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         var gsm = GameStateManager.Instance;
         if (gsm != null) gsm.OnNodeStateChanged -= HandleNodeStateChanged;
+        var dm = DayManager.Instance;
+        if (dm != null) dm.OnDayChanged -= HandleDayChanged;
         RevertHoverFeedback();
 
         // Coroutines die with the object — never leave the whole map locked behind.
@@ -87,8 +96,23 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         RefreshVisual();
     }
 
+    private void HandleDayChanged(int newDay)
+    {
+        RefreshVisual();
+    }
+
     public void RefreshVisual()
     {
+        // Future-day nodes are fully hidden (not just locked) until their day arrives.
+        bool available = IsAvailableToday();
+        if (_spriteRenderer != null) _spriteRenderer.enabled = available;
+        if (_collider != null) _collider.enabled = available;
+        if (!available)
+        {
+            if (lockedIndicator != null) lockedIndicator.SetActive(false);
+            return;
+        }
+
         var gsm = GameStateManager.Instance;
         if (gsm == null) return;
 
@@ -123,7 +147,14 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public bool IsInteractable()
     {
         if (isCosmeticOnly) return false;
+        if (!IsAvailableToday()) return false; // belt-and-braces: the collider is off anyway
         return AreAllSolved(prerequisiteNodeIds);
+    }
+
+    private bool IsAvailableToday()
+    {
+        var dm = DayManager.Instance;
+        return dm == null || dm.CurrentDay >= availableFromDay;
     }
 
     // An empty/null list means no requirement — the list itself is the flag.
@@ -247,4 +278,18 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         var sound = SoundManager.Instance;
         if (sound != null) sound.PlaySfx(SoundID.AUDIO_WRONG);
     }
+
+#if UNITY_EDITOR
+    // Keeps the editor preview on the initial-state sprite whenever stateSprites is
+    // edited, so nodes don't need the SpriteRenderer set by hand.
+    private void OnValidate()
+    {
+        if (Application.isPlaying) return;
+        if (stateSprites == null || stateSprites.Length == 0 || stateSprites[0] == null) return;
+
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null && sr.sprite != stateSprites[0])
+            sr.sprite = stateSprites[0];
+    }
+#endif
 }

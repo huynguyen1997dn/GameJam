@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2248836632683824641}
   - component: {fileID: 8507397546933936497}
   - component: {fileID: 3368176623567264053}
+  - component: {fileID: 2598189787934983456}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -77,6 +78,37 @@ MonoBehaviour:
     game: 0
   - nodeId: ElderHouse
     game: 3
-  - nodeId: CivilHome
+  - nodeId: VillagerHouse
+    game: 4
+  - nodeId: Darkwood
+    game: 4
+  - nodeId: Watchtower
+    game: 4
+  - nodeId: AbandonWell
     game: 4
   miniGameContainer: {fileID: 0}
+--- !u!114 &2598189787934983456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6791438253946041323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28387b161d68945b6a888134a9d10644, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DayManager
+  dayObjectives:
+  - requiredNodeIds:
+    - Bridge
+  - requiredNodeIds:
+    - ElderHouse
+  - requiredNodeIds:
+    - VillagerHouse
+  - requiredNodeIds:
+    - Darkwood
+  - requiredNodeIds:
+    - Watchtower
+  - requiredNodeIds:
+    - AbandonWell
