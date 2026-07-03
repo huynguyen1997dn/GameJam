@@ -17,3 +17,7 @@ MonoBehaviour:
     prefab: {fileID: 2710245823182580489, guid: c21034c4b742d4473a0b48aee9c70c06, type: 3}
     displayName: 
     icon: {fileID: 0}
+  - type: 3
+    prefab: {fileID: 8102848800278883323, guid: d4fcc1e46ee914de09f909d45a008057, type: 3}
+    displayName: TorPainting
+    icon: {fileID: 0}
