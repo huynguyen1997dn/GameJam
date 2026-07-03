@@ -1,51 +1,46 @@
 using SRDebugger;
 using UnityEngine;
+using System.ComponentModel; // Bắt buộc phải có để dùng [Category]
 
 public class SRDebugManager : Singleton<SRDebugManager>
 {
-    [SerializeField] private bool _autoDisableInRelease = true;
+    private MiniGameType _miniGameType;
 
-    protected override void Awake()
+    // 1. Chuyển thành Property để SRDebugger tự động tạo Dropdown chọn Enum
+    [Category("Mini Game Debugger")]
+    public MiniGameType MiniGame
     {
-        base.Awake();
-        if (_autoDisableInRelease && !Debug.isDebugBuild && !Application.isEditor)
+        get => _miniGameType;
+        set => _miniGameType = value;
+    }
+
+    private void Start()
+    {
+        // 2. Đăng ký class này vào hệ thống của SRDebugger khi game chạy
+        SRDebug.Instance.AddOptionContainer(this);
+    }
+
+    private void OnDestroy()
+    {
+        // 3. Hủy đăng ký khi object bị xóa để tránh rò rỉ bộ nhớ (Memory Leak)
+        if (SRDebug.Instance != null)
         {
-            SetTriggerEnabled(false);
+            SRDebug.Instance.RemoveOptionContainer(this);
         }
     }
 
-    public bool IsDebugVisible => SRDebug.Instance != null && SRDebug.Instance.IsDebugPanelVisible;
-
-    public bool IsTriggerEnabled
+    // 4. Hàm Play sẽ tự động biến thành một nút bấm (Button) trong bảng SRDebugger
+    [Category("Mini Game Debugger")]
+    public void Play()
     {
-        get => SRDebug.Instance != null && SRDebug.Instance.IsTriggerEnabled;
-        set => SetTriggerEnabled(value);
-    }
-
-    public void ShowDebugPanel()
-    {
-        if (SRDebug.Instance != null)
-            SRDebug.Instance.ShowDebugPanel(false);
-    }
-
-    public void HideDebugPanel()
-    {
-        if (SRDebug.Instance != null)
-            SRDebug.Instance.HideDebugPanel();
-    }
-
-    public void ToggleDebugPanel()
-    {
-        if (SRDebug.Instance == null) return;
-        if (SRDebug.Instance.IsDebugPanelVisible)
-            SRDebug.Instance.HideDebugPanel();
+        if (MiniGameManager.Instance != null)
+        {
+            MiniGameManager.Instance.StartGame(_miniGameType, null);
+            Debug.Log($"[SRDebug] Đang chạy game: {_miniGameType}");
+        }
         else
-            SRDebug.Instance.ShowDebugPanel(false);
-    }
-
-    private void SetTriggerEnabled(bool enabled)
-    {
-        if (SRDebug.Instance != null)
-            SRDebug.Instance.IsTriggerEnabled = enabled;
+        {
+            Debug.LogError("[SRDebug] MiniGameManager.Instance đang bị NULL!");
+        }
     }
 }
