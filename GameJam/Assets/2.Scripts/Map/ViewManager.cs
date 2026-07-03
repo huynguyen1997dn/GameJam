@@ -12,6 +12,7 @@ public class ViewManager : Singleton<ViewManager>
     [SerializeField] private GameObject backButton;
 
     public event Action<string> OnRoomEnterRequested; // fired with nodeId
+    public event Action OnRoomExited; // fired on any return to the map, incl. the back button
 
     public void EnterRoom(string nodeId)
     {
@@ -26,6 +27,8 @@ public class ViewManager : Singleton<ViewManager>
     {
         if (overviewMapRoot != null) overviewMapRoot.SetActive(true);
         if (backButton != null) backButton.SetActive(false);
-        // The room system hides its own content before/when calling this.
+        // The room system hides its own content before/when calling this; the event
+        // lets it also clean up when the exit came from the map's back button.
+        OnRoomExited?.Invoke();
     }
 }

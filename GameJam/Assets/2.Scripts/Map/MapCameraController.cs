@@ -66,8 +66,19 @@ public class MapCameraController : MonoBehaviour
             return;
         }
 
-        HandleZoomInput();
-        HandlePanInput();
+        if (MapInputLock.IsLocked)
+        {
+            // Scripted moment (e.g. a build animation): drop any drag, ignore zoom/pan,
+            // and glide back to the character so the player watches it happen.
+            _pointerDown = false;
+            _isDragging = false;
+            _isFreeLook = false;
+        }
+        else
+        {
+            HandleZoomInput();
+            HandlePanInput();
+        }
 
         // The character starting to move pulls the camera back into follow mode,
         // unless the player is still holding a drag.

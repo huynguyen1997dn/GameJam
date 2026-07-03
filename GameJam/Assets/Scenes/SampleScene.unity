@@ -336,6 +336,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7858663546388675270, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
   m_PrefabInstance: {fileID: 490282512}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &484426925 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6791438253946041323, guid: f854a2150f6884a628cd988063b21688, type: 3}
+  m_PrefabInstance: {fileID: 1326193315}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &490282512
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -382,6 +387,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5076109134314342054, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5956731862448116927, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: prerequisiteNodeIds.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7881405888677016360, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
@@ -894,10 +903,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5468097389805034406, guid: f854a2150f6884a628cd988063b21688, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6791438253946041323, guid: f854a2150f6884a628cd988063b21688, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1326193319}
   m_SourcePrefab: {fileID: 100100000, guid: f854a2150f6884a628cd988063b21688, type: 3}
 --- !u!4 &1326193316 stripped
 Transform:
@@ -909,12 +922,28 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2248836632683824641, guid: f854a2150f6884a628cd988063b21688, type: 3}
   m_PrefabInstance: {fileID: 1326193315}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 484426925}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96ee148912dd045f796dbe9813356b65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ViewManager
+--- !u!114 &1326193319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 484426925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ec34ba037a014e0898af1b177c7f92d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MiniGameRoomBridge
+  mappings:
+  - nodeId: Forest
+    game: 0
+  miniGameContainer: {fileID: 0}
 --- !u!1 &1470531434
 GameObject:
   m_ObjectHideFlags: 0
