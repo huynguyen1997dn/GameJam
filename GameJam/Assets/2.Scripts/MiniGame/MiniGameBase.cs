@@ -1,6 +1,12 @@
 using System;
 using UnityEngine;
 
+public partial class EventId
+{
+    public const string CompleteGame = "CompleteGame";
+    public const string FailGame = "FailGame";
+
+}
 public abstract class MiniGameBase : MonoBehaviour
 {
     public abstract MiniGameType MiniGameType { get; }
@@ -16,10 +22,14 @@ public abstract class MiniGameBase : MonoBehaviour
     protected void CompleteGame()
     {
         OnGameComplete?.Invoke();
+        EventDispatcher.Dispatch(EventId.CompleteGame);
     }
 
     protected void FailGame()
     {
         OnGameFailed?.Invoke();
+        EventDispatcher.Dispatch(EventId.FailGame);
+
+
     }
 }
