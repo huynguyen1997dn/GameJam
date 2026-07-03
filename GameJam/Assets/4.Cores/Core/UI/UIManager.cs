@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 public partial class ViewID
 {
-
+    public static string MainMenuView = "MainMenuView";
+    public static string GamePlayView = "GamePlayView";
 }
 
 public partial class PopupId
@@ -42,6 +43,8 @@ public class UIManager : Singleton<UIManager>
 
     [SerializeField]
     private Transform _popupContainer;
+    [SerializeField]
+    private Transform _splashContainer;
 
     private readonly Dictionary<string, ViewBase> viewCache = new();
     private readonly Dictionary<string, PopupBase> popupCache = new();
@@ -53,6 +56,8 @@ public class UIManager : Singleton<UIManager>
 
     private void Start()
     {
+        _splashContainer.gameObject.SetActive(false);
+
         if (!autoShowInitialView) return;
         // if (_initialView == null && string.IsNullOrEmpty(initialPopup) && !string.IsNullOrEmpty(initialView))
         // {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CutTreeManager : MonoBehaviour
+public class CutTreeManager : MiniGameBase
 {
     [SerializeField] private CutTreeConfig _config;
     [SerializeField] private Camera _cam;
@@ -13,11 +13,14 @@ public class CutTreeManager : MonoBehaviour
     private TreeController _lastTouchedTree;
     public List<TreeController> _aliveTrees = new();
 
+    public override MiniGameType MiniGameType => global::MiniGameType.CutTree;
+    public override string MiniGameId => "CutTree";
+
     public int CurrentCutCount => _currentCutCount;
     public int TargetCutCount => _config ? _config.targetTreesToCut : 0;
     public bool IsGameOver => _isGameOver;
 
-    private void Start()
+    public override void Init()
     {
         if (!_cam) _cam = Camera.main;
         InitTrees();
@@ -156,6 +159,7 @@ public class CutTreeManager : MonoBehaviour
         Debug.Log($"[CutTree] WIN! Chopped {_currentCutCount} trees!");
 
         OnGameWin();
+        CompleteGame();
     }
 
     protected virtual void OnGameWin()
