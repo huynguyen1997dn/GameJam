@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12c1911e3129843c4b89a0d2ab6e2c80, type: 3}
+  m_Name: CutTreeConfig
+  m_EditorClassIdentifier: Assembly-CSharp::CutTreeConfig
+  minBounds: {x: -3, y: -5}
+  maxBounds: {x: 3, y: 5}
+  treePrefab: {fileID: 3334231173653250011, guid: 4569c39c44a68494cbec50798ff8ee4e, type: 3}
+  initialTreeCount: 10
+  targetTreesToCut: 30
+  respawnDelay: 1.5
+  treeColor: {r: 0, g: 1, b: 0, a: 1}
+  treeSize: {x: 0.8, y: 1.2}
+  chopRadius: 1.5
+  chopSoundId: AUDIO_CHOP
+  completeSoundId: AUDIO_COMPLETE
