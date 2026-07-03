@@ -4,7 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Moves the map character hop-by-hop along the waypoint graph (BFS pathfinding).
+/// Moves the map character along the waypoint graph (BFS pathfinding) as a chain of
+/// short parabolic jumps — up then fall, repeatedly, until the target is reached —
+/// with a small landing beat between jumps and constant ground speed (projectile feel).
+/// Assign `visual` (the sprite child) so the jump offset stays off the root transform:
+/// the camera follows the root, so jumps stay fully visible on screen instead of being
+/// smoothed away by the follow damping.
 /// Plain singleton (not Singleton&lt;T&gt;) because it lives on the character sprite,
 /// typically a child of the map root where DontDestroyOnLoad is invalid.
 /// </summary>
@@ -13,37 +18,47 @@ public class CharacterMapMover : MonoBehaviour
     public static CharacterMapMover Instance { get; private set; }
 
     [SerializeField] private Waypoint currentWaypoint; // starting waypoint, assign in Inspector
-    [SerializeField] private float hopDuration = 0.3f; // seconds per hop between adjacent waypoints
-    [SerializeField] private float hopArcHeight = 0.3f;
-    [SerializeField] private AnimationCurve hopEase;   // horizontal easing; ease-in-out when left empty
+    [SerializeField] private Transform visual;         // sprite child lifted during jumps; root is used if empty
+
+    [Header("Jump Feel")]
+    [SerializeField] private float jumpLength = 1f;       // max ground distance covered by one jump
+    [SerializeField] private float jumpDuration = 0.25f;  // seconds one jump is airborne
+    [SerializeField] private float jumpHeight = 0.5f;     // apex height of each jump
+    [SerializeField] private float jumpInterval = 0.05f;  // landing beat between consecutive jumps
 
     public bool IsMoving { get; private set; }
+
+    private Vector3 _visualBaseLocalPos;
 
     private void Awake()
     {
         Instance = this;
+        if (visual != null) _visualBaseLocalPos = visual.localPosition;
         if (currentWaypoint != null)
             transform.position = currentWaypoint.transform.position;
     }
 
-    public void MoveToWaypoint(Waypoint target, Action onArrive)
+    // Returns false when movement can't start — target missing, or every route is
+    // blocked by gated waypoints — so the caller can give "locked" feedback.
+    public bool MoveToWaypoint(Waypoint target, Action onArrive)
     {
-        if (IsMoving || target == null) return;
+        if (IsMoving || target == null) return false;
 
         if (currentWaypoint == null)
         {
             Debug.LogWarning("[CharacterMapMover] No current waypoint assigned.");
-            return;
+            return false;
         }
 
         var path = FindPath(currentWaypoint, target);
         if (path == null || path.Count == 0)
         {
-            Debug.LogWarning($"[CharacterMapMover] No path found from '{currentWaypoint.name}' to '{target.name}'.");
-            return;
+            Debug.Log($"[CharacterMapMover] No open path from '{currentWaypoint.name}' to '{target.name}' (gated or disconnected).");
+            return false;
         }
 
         StartCoroutine(HopAlongPath(path, onArrive));
+        return true;
     }
 
     private List<Waypoint> FindPath(Waypoint start, Waypoint target)
@@ -69,6 +84,7 @@ public class CharacterMapMover : MonoBehaviour
             foreach (var next in current.neighbors)
             {
                 if (next == null || cameFrom.ContainsKey(next)) continue;
+                if (!next.IsPassable()) continue; // gated until its required rooms are solved
                 cameFrom[next] = current;
                 queue.Enqueue(next);
             }
@@ -83,29 +99,53 @@ public class CharacterMapMover : MonoBehaviour
 
         for (int i = 1; i < path.Count; i++)
         {
-            Vector3 from = path[i - 1].transform.position;
-            Vector3 to = path[i].transform.position;
-
-            float elapsed = 0f;
-            while (elapsed < hopDuration)
-            {
-                elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / hopDuration);
-                float eased = (hopEase != null && hopEase.length > 1)
-                    ? hopEase.Evaluate(t)
-                    : Mathf.SmoothStep(0f, 1f, t);
-
-                Vector3 pos = Vector3.Lerp(from, to, eased);
-                pos.y += Mathf.Sin(t * Mathf.PI) * hopArcHeight;
-                transform.position = pos;
-                yield return null;
-            }
-
-            transform.position = to;
+            yield return HopSegment(path[i - 1].transform.position, path[i].transform.position);
             currentWaypoint = path[i];
         }
 
         IsMoving = false;
         onArrive?.Invoke();
+    }
+
+    // Cross one graph edge as several equal jumps of at most jumpLength each.
+    private IEnumerator HopSegment(Vector3 from, Vector3 to)
+    {
+        int jumps = Mathf.Max(1, Mathf.CeilToInt(Vector3.Distance(from, to) / Mathf.Max(0.01f, jumpLength)));
+
+        for (int j = 0; j < jumps; j++)
+        {
+            Vector3 jumpFrom = Vector3.Lerp(from, to, (float)j / jumps);
+            Vector3 jumpTo = Vector3.Lerp(from, to, (float)(j + 1) / jumps);
+
+            float elapsed = 0f;
+            while (elapsed < jumpDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / jumpDuration);
+                // Linear ground motion + parabolic height 4h·t(1-t): rises to the apex
+                // at mid-jump, then falls — like a projectile.
+                SetPose(Vector3.Lerp(jumpFrom, jumpTo, t), 4f * jumpHeight * t * (1f - t));
+                yield return null;
+            }
+
+            SetPose(jumpTo, 0f);
+            if (jumpInterval > 0f)
+                yield return new WaitForSeconds(jumpInterval);
+        }
+    }
+
+    // Root carries the ground position; the visual child carries the jump height,
+    // so the camera (which follows the root) never dampens the arc.
+    private void SetPose(Vector3 groundPos, float height)
+    {
+        if (visual != null)
+        {
+            transform.position = groundPos;
+            visual.localPosition = _visualBaseLocalPos + new Vector3(0f, height, 0f);
+        }
+        else
+        {
+            transform.position = groundPos + new Vector3(0f, height, 0f);
+        }
     }
 }

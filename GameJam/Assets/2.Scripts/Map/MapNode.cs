@@ -11,7 +11,7 @@ using UnityEngine.EventSystems;
 /// EventSystem in the scene. Using these instead of OnMouse* gives proper touch
 /// support and lets UI block map clicks automatically.
 /// </summary>
-public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, IDragHandler
 {
     [Header("Identity")]
     public string nodeId; // must match the room dev's room identifier
@@ -24,8 +24,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public string[] watchedNodeIds; // used only when isCosmeticOnly == true
 
     [Header("Prerequisites")]
-    public bool requiresPrerequisite;
-    public string[] prerequisiteNodeIds; // all must be solved before this node unlocks
+    public string[] prerequisiteNodeIds; // leave empty for none; all must be solved before this node unlocks
     public GameObject lockedIndicator;   // optional, shown while not interactable
 
     [Header("Movement")]
@@ -101,11 +100,12 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public bool IsInteractable()
     {
         if (isCosmeticOnly) return false;
-        if (!requiresPrerequisite) return true;
+        // A non-empty prerequisite list is the requirement itself — no separate flag
+        // to forget in the Inspector.
+        if (prerequisiteNodeIds == null || prerequisiteNodeIds.Length == 0) return true;
 
         var gsm = GameStateManager.Instance;
         if (gsm == null) return false;
-        if (prerequisiteNodeIds == null) return true;
 
         foreach (var id in prerequisiteNodeIds)
             if (!gsm.IsSolved(id)) return false;
@@ -125,9 +125,14 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         RevertHoverFeedback();
     }
 
+    // Empty on purpose: registers this node as the EventSystem's drag target, so a
+    // camera pan that starts here sets eventData.dragging and is not treated as a tap.
+    public void OnDrag(PointerEventData eventData) { }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if (isCosmeticOnly) return;
+        if (eventData.dragging) return; // was a camera pan, not a tap
 
         if (!IsInteractable())
         {
@@ -135,16 +140,23 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             return;
         }
 
+        // Solved rooms don't open again — the node stays clickable and the character
+        // still walks over, but arrival triggers nothing.
+        var gsm = GameStateManager.Instance;
+        bool openRoom = gsm == null || !gsm.IsSolved(nodeId);
+
         var mover = CharacterMapMover.Instance;
         if (mover == null)
         {
             // No character on the map — open the room directly.
-            ViewManager.Instance.EnterRoom(nodeId);
+            if (openRoom) ViewManager.Instance.EnterRoom(nodeId);
             return;
         }
 
         if (mover.IsMoving) return;
-        mover.MoveToWaypoint(destinationWaypoint, () => ViewManager.Instance.EnterRoom(nodeId));
+        System.Action onArrive = openRoom ? () => ViewManager.Instance.EnterRoom(nodeId) : (System.Action)null;
+        if (!mover.MoveToWaypoint(destinationWaypoint, onArrive))
+            PlayLockedFeedback(); // no open route — e.g. a gated waypoint blocks the way
     }
 
     private void RevertHoverFeedback()

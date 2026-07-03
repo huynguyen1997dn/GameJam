@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Camera rig for the big overview map: smoothly follows the character to keep it
 /// centered, zooms via mouse scroll or two-finger pinch (legacy Input Manager), and
-/// clamps the view so it never shows outside the map bounds. Freezes while the map
-/// is hidden (room view). Camera must be orthographic.
+/// clamps the view so it never shows outside the map bounds. Dragging (mouse or one
+/// finger) pans to nearby zones; follow resumes when the character next moves.
+/// Freezes while the map is hidden (room view). Camera must be orthographic.
 /// </summary>
 [RequireComponent(typeof(Camera))]
 public class MapCameraController : MonoBehaviour
@@ -22,8 +24,16 @@ public class MapCameraController : MonoBehaviour
     [SerializeField] private float scrollZoomStep = 1f;    // ortho units per mouse-wheel notch
     [SerializeField] private float pinchZoomSpeed = 0.02f; // ortho units per pixel of pinch distance change
 
+    [Header("Drag Pan")]
+    [SerializeField] private bool dragPanEnabled = true;
+
     private Camera _cam;
     private Vector3 _followVelocity;
+    private bool _pointerDown;        // pointer held, possibly still a tap
+    private bool _isDragging;         // passed the drag threshold, actively panning
+    private bool _isFreeLook;         // player panned away; follow is paused
+    private Vector2 _pointerDownScreenPos;
+    private Vector3 _dragOriginWorld; // world point pinned under the pointer while panning
 
     private void Awake()
     {
@@ -46,12 +56,88 @@ public class MapCameraController : MonoBehaviour
     private void LateUpdate()
     {
         // While in room view the map (and character) is inactive — freeze the map camera
-        // so the room dev's view is unaffected by scroll/pinch.
-        if (followTarget == null || !followTarget.gameObject.activeInHierarchy) return;
+        // so the room dev's view is unaffected by scroll/pinch. Dropping free look here
+        // means exiting a room always comes back centered on the character.
+        if (followTarget == null || !followTarget.gameObject.activeInHierarchy)
+        {
+            _pointerDown = false;
+            _isDragging = false;
+            _isFreeLook = false;
+            return;
+        }
 
         HandleZoomInput();
-        FollowTarget();
+        HandlePanInput();
+
+        // The character starting to move pulls the camera back into follow mode,
+        // unless the player is still holding a drag.
+        var mover = CharacterMapMover.Instance;
+        if (_isFreeLook && !_pointerDown && mover != null && mover.IsMoving)
+            _isFreeLook = false;
+
+        if (!_isFreeLook)
+            FollowTarget();
+
         ClampToBounds();
+    }
+
+    private void HandlePanInput()
+    {
+        // Two fingers belong to pinch zoom — abandon any pan in progress.
+        if (!dragPanEnabled || Input.touchCount >= 2)
+        {
+            _pointerDown = false;
+            _isDragging = false;
+            return;
+        }
+
+        bool held;
+        Vector2 pos;
+        bool overUI;
+        if (Input.touchCount == 1)
+        {
+            Touch t = Input.GetTouch(0);
+            held = t.phase != TouchPhase.Ended && t.phase != TouchPhase.Canceled;
+            pos = t.position;
+            overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(t.fingerId);
+        }
+        else
+        {
+            held = Input.GetMouseButton(0);
+            pos = Input.mousePosition;
+            overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        }
+
+        if (!held)
+        {
+            _pointerDown = false;
+            _isDragging = false;
+            return;
+        }
+
+        if (!_pointerDown)
+        {
+            if (overUI) return; // don't start pans on UI
+            _pointerDown = true;
+            _pointerDownScreenPos = pos;
+            return;
+        }
+
+        if (!_isDragging)
+        {
+            // Same threshold the EventSystem uses to tell clicks from drags, so a tap
+            // that opens a room never nudges the camera.
+            float threshold = EventSystem.current != null ? EventSystem.current.pixelDragThreshold : 10f;
+            if ((pos - _pointerDownScreenPos).sqrMagnitude < threshold * threshold) return;
+            _isDragging = true;
+            _isFreeLook = true;
+            _dragOriginWorld = _cam.ScreenToWorldPoint(pos); // anchor here to avoid a catch-up jump
+        }
+
+        // Grab-the-world pan: move the camera so the anchored world point stays under the pointer.
+        Vector3 diff = _dragOriginWorld - _cam.ScreenToWorldPoint(pos);
+        diff.z = 0f;
+        transform.position += diff;
     }
 
     private void HandleZoomInput()
