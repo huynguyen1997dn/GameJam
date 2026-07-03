@@ -5,4 +5,5 @@ public enum MiniGameType
     Racing,
     TorPainting,
     SortHome,
+    TheDarkForest,
 }
