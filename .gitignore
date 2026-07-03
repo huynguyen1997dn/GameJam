@@ -1,0 +1,23 @@
+obj
+Library
+Logs
+*.csproj
+Temp
+.utmp
+
+
+**/FR2_Cache.asset*
+*.sln
+*.vscode
+.idea
+Packages/packages-lock.json
+Assets/GeneratedLocalRepo
+
+UserSettings
+woolpuzzl_iosbuild
+*.DS_Store
+UserSettings/Layouts
+0._Mockup.meta
+Assets/0._Mockup
+xcode_cloud_iosbuild
+Wool Puzzle_BurstDebugInformation_DoNotShip
