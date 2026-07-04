@@ -155,6 +155,9 @@ public class TorPaintingManager : MiniGameBase
     {
         _placedCount++;
 
+        EventDispatcher.Dispatch(EventId.MiniGameProgressUpdate,
+            new MiniGameProgressData { gameType = MiniGameType.TorPainting, current = _placedCount, target = _config.pieceCount });
+
         if (!string.IsNullOrEmpty(_config.placeSoundId))
         {
             SoundManager.Instance.PlaySfx(_config.placeSoundId);

@@ -15,11 +15,11 @@ MonoBehaviour:
   minBounds: {x: -3, y: -5}
   maxBounds: {x: 3, y: 5}
   treePrefab: {fileID: 3334231173653250011, guid: 4569c39c44a68494cbec50798ff8ee4e, type: 3}
-  initialTreeCount: 10
+  initialTreeCount: 15
   targetTreesToCut: 30
-  respawnDelay: 1.5
+  respawnDelay: 0.75
   treeColor: {r: 0, g: 1, b: 0, a: 1}
-  treeSize: {x: 0.8, y: 1.2}
+  treeSize: {x: 0.5, y: 0.9}
   chopRadius: 1.5
   chopSoundId: AUDIO_CHOP
   completeSoundId: AUDIO_COMPLETE

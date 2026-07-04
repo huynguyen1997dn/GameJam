@@ -9,6 +9,10 @@ public partial class ViewID
 {
     public static string MainMenuView = "MainMenuView";
     public static string GamePlayView = "GamePlayView";
+    public static string MiniGameGameView_CutTree = "MiniGameGameView_CutTree";
+    public static string MiniGameGameView_TorPainting = "MiniGameGameView_TorPainting";
+    public static string MiniGameGameView_SortHome = "MiniGameGameView_SortHome";
+    public static string MiniGameGameView_TheDarkForest = "MiniGameGameView_TheDarkForest";
 }
 
 public partial class PopupId

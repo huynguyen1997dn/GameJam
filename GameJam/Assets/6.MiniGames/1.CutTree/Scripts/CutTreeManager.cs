@@ -139,6 +139,9 @@ public class CutTreeManager : MiniGameBase
 
         _currentCutCount++;
 
+        EventDispatcher.Dispatch(EventId.MiniGameProgressUpdate,
+            new MiniGameProgressData { gameType = MiniGameType.CutTree, current = _currentCutCount, target = _config.targetTreesToCut });
+
         SoundManager.Instance.PlaySfx(_config.chopSoundId);
 
         if (_currentCutCount >= _config.targetTreesToCut)

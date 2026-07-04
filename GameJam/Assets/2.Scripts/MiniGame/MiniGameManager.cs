@@ -7,6 +7,13 @@ public class MiniGameManager : Singleton<MiniGameManager>
 
     private MiniGameBase _currentMiniGame;
     private readonly Dictionary<MiniGameType, GameObject> _prefabMap = new();
+    private readonly Dictionary<MiniGameType, string> _viewMap = new()
+    {
+        { MiniGameType.CutTree, ViewID.MiniGameGameView_CutTree },
+        { MiniGameType.TorPainting, ViewID.MiniGameGameView_TorPainting },
+        { MiniGameType.SortHome, ViewID.MiniGameGameView_SortHome },
+        { MiniGameType.TheDarkForest, ViewID.MiniGameGameView_TheDarkForest },
+    };
 
     public MiniGameBase CurrentMiniGame => _currentMiniGame;
     public MiniGameConfigSO Config => _config;
@@ -28,6 +35,15 @@ public class MiniGameManager : Singleton<MiniGameManager>
         }
     }
 
+    public void StartGameWithView(MiniGameType type, Transform container = null)
+    {
+        StartGame(type, container);
+        if (_viewMap.TryGetValue(type, out var viewId))
+        {
+            UIManager.Instance.OnShowView(viewId);
+        }
+    }
+
     public MiniGameBase StartGame(MiniGameType type, Transform container)
     {
         EndCurrentGame();
@@ -37,6 +53,8 @@ public class MiniGameManager : Singleton<MiniGameManager>
             Debug.LogError($"[MiniGameManager] No prefab for {type}");
             return null;
         }
+        
+        
 
         var go = Instantiate(prefab, container);
         go.transform.localPosition = Vector3.zero;

@@ -139,6 +139,9 @@ public class SortHomeManager : MiniGameBase
     {
         _placedCount++;
 
+        EventDispatcher.Dispatch(EventId.MiniGameProgressUpdate,
+            new MiniGameProgressData { gameType = MiniGameType.SortHome, current = _placedCount, target = _config.items.Count });
+
         if (!string.IsNullOrEmpty(_config.placeSoundId))
         {
             SoundManager.Instance?.PlaySfx(_config.placeSoundId);

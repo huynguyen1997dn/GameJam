@@ -176,6 +176,9 @@ public class TheDarkForestManager : MiniGameBase
     {
         _currentRow++;
 
+        EventDispatcher.Dispatch(EventId.MiniGameProgressUpdate,
+            new MiniGameProgressData { gameType = MiniGameType.TheDarkForest, current = _currentRow, target = _config.rows });
+
         if (_currentRow >= _config.rows)
         {
             ShowTower();

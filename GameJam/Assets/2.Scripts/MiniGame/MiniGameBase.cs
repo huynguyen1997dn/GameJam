@@ -5,6 +5,7 @@ public partial class EventId
 {
     public const string CompleteGame = "CompleteGame";
     public const string FailGame = "FailGame";
+    public const string MiniGameProgressUpdate = "MiniGameProgressUpdate";
 
 }
 public abstract class MiniGameBase : MonoBehaviour
