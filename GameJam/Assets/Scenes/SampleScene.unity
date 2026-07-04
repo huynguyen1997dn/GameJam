@@ -1119,34 +1119,6 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 518
       objectReference: {fileID: 0}
-    - target: {fileID: 1253468505699081537, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: infoIcon
-      value: 
-      objectReference: {fileID: 21300000, guid: 2dcd28bb7cfb949149c8918430385677, type: 3}
-    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: infoTitle
-      value: Vo danh
-      objectReference: {fileID: 0}
-    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: statInfos.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: statInfos.Array.data[0].label
-      value: "\u0111\xE3 c\u1EE9u"
-      objectReference: {fileID: 0}
-    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: statInfos.Array.data[0].baseValue
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: statInfos.Array.data[0].dailyIncrement
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 1446480966206076076, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
       value: 205
@@ -1155,17 +1127,17 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -164
       objectReference: {fileID: 0}
-    - target: {fileID: 1704054803443415490, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 2943420654692042463, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1219
+      objectReference: {fileID: 0}
+    - target: {fileID: 3077577103111816745, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: m_SortingOrder
+      value: -664
       objectReference: {fileID: 0}
     - target: {fileID: 3733596580147528439, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
       value: -473
-      objectReference: {fileID: 0}
-    - target: {fileID: 4170263873439001333, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: m_SortingOrder
-      value: -32768
       objectReference: {fileID: 0}
     - target: {fileID: 4240425236551649063, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
@@ -1215,29 +1187,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5095167642598599011, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1851
+      objectReference: {fileID: 0}
+    - target: {fileID: 5210476360838688910, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: m_SortingOrder
+      value: -96
+      objectReference: {fileID: 0}
     - target: {fileID: 5798640167451276639, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
       value: 392
-      objectReference: {fileID: 0}
-    - target: {fileID: 6422120973128922942, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: sortPointOffset.y
-      value: 1.9
       objectReference: {fileID: 0}
     - target: {fileID: 6481557372753228903, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
       value: -1649
       objectReference: {fileID: 0}
-    - target: {fileID: 6580485995100334734, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: spawnEntries.Array.data[2].count
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 6774390735722362693, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
       value: 882
-      objectReference: {fileID: 0}
-    - target: {fileID: 6876698394405968706, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: m_SortingOrder
-      value: -32768
       objectReference: {fileID: 0}
     - target: {fileID: 6934583582906107688, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
@@ -1247,21 +1215,13 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 847
       objectReference: {fileID: 0}
-    - target: {fileID: 7562342052924723915, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: m_SortingOrder
-      value: -32768
-      objectReference: {fileID: 0}
     - target: {fileID: 7881405888677016360, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_Name
       value: OverviewMapRoot
       objectReference: {fileID: 0}
-    - target: {fileID: 7881405888677016360, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8074761283431763463, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
-      value: 22
+      value: -1293
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3399,7 +3359,19 @@ MonoBehaviour:
   _bgmAudioSource: {fileID: 494974590}
   _sfxHolder: {fileID: 1011234645}
   audioSourceCount: 8
-  _soundsData: []
+  _soundsData:
+  - SoundId: AUDIO_WALK
+    SoundType: 1
+    SoundClip: {fileID: 8300000, guid: d1d361a4e88ae429b914ea5ae0fb9b89, type: 3}
+  - SoundId: AUDIO_COMPLETE
+    SoundType: 1
+    SoundClip: {fileID: 8300000, guid: 95c6ab4bcbd6649feae3e97ce18702bb, type: 3}
+  - SoundId: AUDIO_BUILD
+    SoundType: 1
+    SoundClip: {fileID: 8300000, guid: 650ba2b1ef1b842e19bc287ea7ded983, type: 3}
+  - SoundId: AUDIO_CHOP
+    SoundType: 1
+    SoundClip: {fileID: 8300000, guid: 620d3e6f79f9b4c73bda785496e8e215, type: 3}
 --- !u!4 &2094748942
 Transform:
   m_ObjectHideFlags: 0

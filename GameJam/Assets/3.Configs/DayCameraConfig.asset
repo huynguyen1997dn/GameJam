@@ -23,7 +23,7 @@ MonoBehaviour:
     dragEnabled: 1
     cameraSize: 10
     boundingBoxName: CameraBounds_Day2
-  - day: 6
+  - day: 5
     followCharacter: 1
     dragEnabled: 1
     cameraSize: 10

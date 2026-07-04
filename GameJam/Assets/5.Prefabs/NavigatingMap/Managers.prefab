@@ -109,11 +109,9 @@ MonoBehaviour:
   - requiredNodeIds:
     - VillagerHouse
   - requiredNodeIds:
-    - Darkwood
-  - requiredNodeIds:
     - Watchtower
   - requiredNodeIds:
-    - AbandonWell
+    - Shrine
 --- !u!114 &9159359759026933679
 MonoBehaviour:
   m_ObjectHideFlags: 0

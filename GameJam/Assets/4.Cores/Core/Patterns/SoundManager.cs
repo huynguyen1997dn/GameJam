@@ -9,6 +9,7 @@ public static class SoundID
 {
     public static string AUDIO_BTN = "AUDIO_BTN";
     public static string AUDIO_WRONG = "AUDIO_WRONG";
+    public static string AUDIO_WALK = "AUDIO_WALK";
 }
 
 public class SoundManager : Singleton<SoundManager>

@@ -7,6 +7,8 @@ using UnityEngine;
 /// Moves the map character along the waypoint graph (BFS pathfinding) as a chain of
 /// short parabolic jumps — up then fall, repeatedly, until the target is reached —
 /// with a small landing beat between jumps and constant ground speed (projectile feel).
+/// Turn `hopEnabled` off for a flat constant-speed glide at `moveSpeed` instead,
+/// when a walk animation (e.g. Spine) supplies the motion.
 /// Assign `visual` (the sprite child) so the jump offset stays off the root transform:
 /// the camera follows the root, so jumps stay fully visible on screen instead of being
 /// smoothed away by the follow damping.
@@ -21,10 +23,17 @@ public class CharacterMapMover : MonoBehaviour
     [SerializeField] private Transform visual;         // sprite child lifted during jumps; root is used if empty
 
     [Header("Jump Feel")]
+    [SerializeField] private bool hopEnabled = true;      // off = flat linear glide (e.g. when a Spine walk anim carries the motion)
     [SerializeField] private float jumpLength = 1f;       // max ground distance covered by one jump
     [SerializeField] private float jumpDuration = 0.25f;  // seconds one jump is airborne
     [SerializeField] private float jumpHeight = 0.5f;     // apex height of each jump
     [SerializeField] private float jumpInterval = 0.05f;  // landing beat between consecutive jumps
+
+    [Header("Linear Move (hop disabled)")]
+    [SerializeField] private float moveSpeed = 3.5f;      // ground units per second
+
+    [Header("Sound")]
+    [SerializeField] private float walkSfxInterval = 0.5f; // seconds between AUDIO_WALK plays while moving
 
     public bool IsMoving { get; private set; }
 
@@ -96,15 +105,28 @@ public class CharacterMapMover : MonoBehaviour
     private IEnumerator HopAlongPath(List<Waypoint> path, Action onArrive)
     {
         IsMoving = true;
+        StartCoroutine(WalkSfxLoop());
 
         for (int i = 1; i < path.Count; i++)
         {
-            yield return HopSegment(path[i - 1].transform.position, path[i].transform.position);
+            Vector3 from = path[i - 1].transform.position;
+            Vector3 to = path[i].transform.position;
+            yield return hopEnabled ? HopSegment(from, to) : SlideSegment(from, to);
             currentWaypoint = path[i];
         }
 
         IsMoving = false;
         onArrive?.Invoke();
+    }
+
+    private IEnumerator WalkSfxLoop()
+    {
+        while (IsMoving)
+        {
+            var sound = SoundManager.Instance;
+            if (sound != null) sound.PlaySfx(SoundID.AUDIO_WALK);
+            yield return new WaitForSeconds(Mathf.Max(0.05f, walkSfxInterval));
+        }
     }
 
     // Cross one graph edge as several equal jumps of at most jumpLength each.
@@ -132,6 +154,23 @@ public class CharacterMapMover : MonoBehaviour
             if (jumpInterval > 0f)
                 yield return new WaitForSeconds(jumpInterval);
         }
+    }
+
+    // Flat constant-speed glide across one graph edge — used when hopEnabled is off
+    // so a walk animation (e.g. Spine) can carry the motion instead of the bounce.
+    private IEnumerator SlideSegment(Vector3 from, Vector3 to)
+    {
+        float duration = Vector3.Distance(from, to) / Mathf.Max(0.01f, moveSpeed);
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            SetPose(Vector3.Lerp(from, to, Mathf.Clamp01(elapsed / duration)), 0f);
+            yield return null;
+        }
+
+        SetPose(to, 0f);
     }
 
     // Root carries the ground position; the visual child carries the jump height,

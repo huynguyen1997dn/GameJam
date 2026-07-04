@@ -444,6 +444,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         Debug.Log($"[MapNode] Building '{nodeId}'...");
         transform.DOKill(true);
         transform.DOShakeScale(buildDuration, 0.15f, 8);
+        SoundManager.Instance.PlaySfx("AUDIO_BUILD");
 
         yield return new WaitForSeconds(buildDuration);
 
