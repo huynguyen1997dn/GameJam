@@ -6,4 +6,6 @@ public enum CharacterId
     OldMan,
     Witch,
     Monster,
+    Villager,
+    Narrator,
 }

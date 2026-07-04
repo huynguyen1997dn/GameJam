@@ -385,13 +385,7 @@ public class Day1TutorialController : MonoBehaviour
         TutorialInputGate.BlockAll();
         tutorialView.HideHighlight();
         tutorialView.ShowObjective("Explore the village.");
-        tutorialView.PlayBlockingDialogue(new[]
-        {
-            new TutorialDialogueLine("Villager", "Are you new here?"),
-            new TutorialDialogueLine("Villager", "I do not remember seeing you before."),
-            new TutorialDialogueLine("Narrator", "They forgot."),
-            new TutorialDialogueLine("Narrator", "But the bridge remained."),
-        }, EndTutorial);
+        ShowDialogForPhase(PhaseId.Day2Reveal, EndTutorial);
     }
 
     private void HandleNodeClicked(string nodeId)
@@ -538,11 +532,7 @@ public class Day1TutorialController : MonoBehaviour
 
         tutorialView.HideHighlight();
         tutorialView.ShowObjective("Repair the bridge.");
-        tutorialView.PlayBlockingDialogue(new[]
-        {
-            new TutorialDialogueLine("Protagonist", "The bridge stands again."),
-            new TutorialDialogueLine("Protagonist", "No one saw it happen, but it is there."),
-        }, () => AdvanceToStep(TutorialStep.TUT_07_JOURNAL_UPDATED));
+        ShowDialogForPhase(PhaseId.BridgeRepaired, () => AdvanceToStep(TutorialStep.TUT_07_JOURNAL_UPDATED));
     }
 
     private IEnumerator OpenJournalFallbackRoutine()

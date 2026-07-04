@@ -7,11 +7,17 @@ public enum NodeInteraction
 {
     OpenMiniGame, // hop to the node, then open its room/minigame
     Construct,    // hop to the node, then build it on the spot; prerequisites gate the build, not the click
+    Interact,     // hop to the node, then play a dialogue sequence; finishing it marks the node solved
 }
 
 /// <summary>
 /// Clickable/reactive prop on the overview map (statue, temple, market, ...).
-/// Interactable nodes need a Collider2D (PolygonCollider2D preferred) and a SpriteRenderer.
+/// Preferred structure: this component on a parent object with two children — a
+/// "Visual" child (SpriteRenderer + Collider2D, assign visualRenderer) and an
+/// interact-indicator child (diamond SpriteRenderer + Collider2D, assign
+/// interactIndicator). Pointer events on child colliders bubble up the hierarchy to
+/// this component, so the diamond is clickable exactly like the node itself. Legacy
+/// single-object nodes (renderer + collider on this object) keep working via fallbacks.
 /// Cosmetic-only nodes need only a SpriteRenderer; their visual is driven by watchedNodeIds.
 /// Pointer events come from the EventSystem (works with the legacy Input Manager via
 /// StandaloneInputModule): requires a Physics2DRaycaster on the camera and an
@@ -25,7 +31,9 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public NodeInteraction interaction = NodeInteraction.OpenMiniGame;
 
     [Header("Visuals")]
+    [SerializeField] private SpriteRenderer visualRenderer; // main node visual; falls back to a renderer on this object, then any child
     public Sprite[] stateSprites; // index 0 = initial, index 1 = solved, ...
+    [SerializeField] private GameObject interactIndicator; // diamond child shown while the node is unlocked and unsolved; clickable too
 
     [Header("Cosmetic Only (visual, not clickable)")]
     public bool isCosmeticOnly;
@@ -34,11 +42,17 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     [Header("Prerequisites")]
     public string[] prerequisiteNodeIds; // leave empty for none; all must be solved before this node unlocks
     public GameObject lockedIndicator;   // optional, shown while not interactable
+    [Tooltip("Fully hide this node (like a future-day node) until all prerequisites are solved.")]
+    public bool hideUntilPrerequisitesMet;
 
     [Header("Construction (interaction = Construct)")]
     public string[] buildRequirementIds; // checked on arrival, independent of the click gate above
     [SerializeField] private float buildDuration = 1.5f;
     [SerializeField] private string buildBlockedMessage = "Need X woods"; // placeholder notification text
+
+    [Header("Dialogue (interaction = Interact)")]
+    [Tooltip("DialogPopup phase played on arrival; finishing the sequence marks this node solved.")]
+    [SerializeField] private PhaseId dialoguePhaseId = PhaseId.None;
 
     [Header("Day Availability")]
     public int availableFromDay = 1; // fully hidden until DayManager reaches this day
@@ -51,18 +65,34 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     [SerializeField] private Color hoverTint = new Color(1f, 0.95f, 0.75f);
 
     private SpriteRenderer _spriteRenderer;
-    private Collider2D _collider;
+    private Collider2D[] _colliders;
     private Vector3 _baseScale;
     private Color _baseColor;
     private bool _isHovered;
     private bool _isBuilding;
+    private bool _isInteracting;
 
     private void Awake()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _collider = GetComponent<Collider2D>(); // null on cosmetic nodes
+        _spriteRenderer = ResolveVisualRenderer();
+        _colliders = GetComponentsInChildren<Collider2D>(true); // on self and/or children; empty on cosmetic nodes
         _baseScale = transform.localScale;
         if (_spriteRenderer != null) _baseColor = _spriteRenderer.color;
+    }
+
+    // Serialized reference first, then a renderer on this object (legacy single-object
+    // nodes), then the first child renderer that isn't part of the interact indicator.
+    private SpriteRenderer ResolveVisualRenderer()
+    {
+        if (visualRenderer != null) return visualRenderer;
+
+        var own = GetComponent<SpriteRenderer>();
+        if (own != null) return own;
+
+        foreach (var renderer in GetComponentsInChildren<SpriteRenderer>(true))
+            if (interactIndicator == null || !renderer.transform.IsChildOf(interactIndicator.transform))
+                return renderer;
+        return null;
     }
 
     private void OnEnable()
@@ -88,6 +118,15 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             _isBuilding = false;
             MapInputLock.Unlock();
         }
+
+        // Same failsafe for a dialogue in flight: drop it without completing, so the
+        // node stays unsolved and the player can trigger it again. The DialogPopup's
+        // OnClosed callback no-ops once _isInteracting is cleared.
+        if (_isInteracting)
+        {
+            _isInteracting = false;
+            MapInputLock.Unlock();
+        }
     }
 
     private void HandleNodeStateChanged(string changedNodeId, int newState)
@@ -103,13 +142,15 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     public void RefreshVisual()
     {
-        // Future-day nodes are fully hidden (not just locked) until their day arrives.
-        bool available = IsAvailableToday();
-        if (_spriteRenderer != null) _spriteRenderer.enabled = available;
-        if (_collider != null) _collider.enabled = available;
-        if (!available)
+        // Future-day nodes are fully hidden (not just locked) until their day arrives;
+        // hideUntilPrerequisitesMet extends the same full-hide to prerequisite gating.
+        bool visible = IsAvailableToday() && (!hideUntilPrerequisitesMet || AreAllSolved(prerequisiteNodeIds));
+        if (_spriteRenderer != null) _spriteRenderer.enabled = visible;
+        SetCollidersEnabled(visible);
+        if (!visible)
         {
             if (lockedIndicator != null) lockedIndicator.SetActive(false);
+            if (interactIndicator != null) interactIndicator.SetActive(false);
             return;
         }
 
@@ -140,6 +181,18 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
         if (lockedIndicator != null)
             lockedIndicator.SetActive(!isCosmeticOnly && !IsInteractable());
+
+        // The diamond marks "something to do here right now": unlocked and unsolved.
+        // Locked nodes show only their sprite; clicking them plays the deny feedback.
+        if (interactIndicator != null)
+            interactIndicator.SetActive(!isCosmeticOnly && IsInteractable() && !gsm.IsSolved(nodeId));
+    }
+
+    private void SetCollidersEnabled(bool enabled)
+    {
+        if (_colliders == null) return;
+        foreach (var col in _colliders)
+            if (col != null) col.enabled = enabled;
     }
 
     // The click gate applies to every node kind, construction included: e.g. Bridge
@@ -240,9 +293,58 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             return;
         }
 
+        if (interaction == NodeInteraction.Interact)
+        {
+            if (!solved) StartInteractDialogue(); // finished ones don't replay
+            return;
+        }
+
         // Minigame flow — solved rooms don't open again; the node stays clickable and
         // the character still walks over, but arrival triggers nothing.
         if (!solved) ViewManager.Instance.EnterRoom(nodeId);
+    }
+
+    // The map freezes for the dialogue; finishing it marks the node solved — the same
+    // unlock currency as a cleared room, so prerequisite gates react identically.
+    private void StartInteractDialogue()
+    {
+        if (dialoguePhaseId == PhaseId.None)
+        {
+            Debug.LogWarning($"[MapNode] '{nodeId}': no dialogue phase assigned — solving immediately.");
+            GameStateManager.Instance.SetNodeState(nodeId, 1);
+            return;
+        }
+
+        _isInteracting = true;
+        MapInputLock.Lock();
+        RevertHoverFeedback();
+        StartCoroutine(InteractDialogueRoutine());
+    }
+
+    private IEnumerator InteractDialogueRoutine()
+    {
+        UIManager.Instance.OnShowPopup(PopupId.DialogPopup, dialoguePhaseId);
+        yield return null;
+
+        var popup = UIManager.Instance.GetCurrentPopup() as DialogPopup;
+        if (popup != null)
+        {
+            popup.OnClosed = CompleteInteractDialogue;
+        }
+        else
+        {
+            Debug.LogError($"[MapNode] '{nodeId}': DialogPopup not found");
+            CompleteInteractDialogue();
+        }
+    }
+
+    private void CompleteInteractDialogue()
+    {
+        if (!_isInteracting) return; // node was disabled mid-dialogue — stays unsolved
+        _isInteracting = false;
+        // Unlock before SetNodeState: reveal effects (e.g. MapFog) wait on the lock.
+        MapInputLock.Unlock();
+        GameStateManager.Instance.SetNodeState(nodeId, 1);
     }
 
     // Everything on the map is frozen while the build plays out, then marking the node
@@ -291,7 +393,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         if (Application.isPlaying) return;
         if (stateSprites == null || stateSprites.Length == 0 || stateSprites[0] == null) return;
 
-        var sr = GetComponent<SpriteRenderer>();
+        var sr = ResolveVisualRenderer();
         if (sr != null && sr.sprite != stateSprites[0])
             sr.sprite = stateSprites[0];
     }
