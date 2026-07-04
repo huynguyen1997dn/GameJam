@@ -54,7 +54,7 @@ public class NodeInfoPopup : PopupBase
             var row = Instantiate(_statRowTemplate, _statContainer);
             row.gameObject.SetActive(true);
             row.text = stat.dailyIncrement > 0
-                ? $"{stat.label}: {value} (+{stat.dailyIncrement}/ngày)"
+                ? $"{stat.label}: {value} "
                 : $"{stat.label}: {value}";
             _rows.Add(row);
         }

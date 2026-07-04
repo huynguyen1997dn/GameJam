@@ -87,6 +87,12 @@ public class MiniGameRoomBridge : MonoBehaviour
     {
         if (_activeNodeId == null) return; // game started elsewhere (e.g. SRDebugger panel)
         GameStateManager.Instance.SetNodeState(_activeNodeId, 1);
+
+        // Switch from OpenMiniGame to Interact after minigame completion
+        var mapNodes = FindObjectsByType<MapNode>(FindObjectsSortMode.None);
+        foreach (var node in mapNodes)
+            if (node.nodeId == _activeNodeId) { node.interaction = NodeInteraction.Interact; break; }
+
         CloseRoom();
     }
 

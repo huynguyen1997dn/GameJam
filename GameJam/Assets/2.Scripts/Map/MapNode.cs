@@ -380,7 +380,16 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
         if (interaction == NodeInteraction.Interact)
         {
-            if (!solved) StartInteractDialogue(); // finished ones don't replay
+            if (!solved)
+            {
+                StartInteractDialogue();
+            }
+            else if (infoIcon != null || statInfos.Count > 0)
+            {
+                int day = DayManager.Instance != null ? DayManager.Instance.CurrentDay : 1;
+                RevertHoverFeedback();
+                UIManager.Instance.OnShowPopup(PopupId.NodeInfoPopup, infoIcon, infoTitle, day, statInfos);
+            }
             return;
         }
 
