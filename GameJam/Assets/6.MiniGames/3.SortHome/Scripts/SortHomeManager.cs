@@ -108,6 +108,8 @@ public class SortHomeManager : MiniGameBase
             if (_config.slotPrefab != null)
             {
                 slotGO = Instantiate(_config.slotPrefab, transform);
+                if (slot.scale > 0f)
+                    slotGO.transform.localScale = new Vector3(slot.scale, slot.scale, 1);
             }
             else
             {
@@ -123,13 +125,20 @@ public class SortHomeManager : MiniGameBase
 
                 sr.sortingOrder = -5;
 
-                float s = _config.puzzleSize / slot.sprite.bounds.size.x * 0.5f;
+                float s = GetSlotScale(slot);
                 slotGO.transform.localScale = new Vector3(s, s, 1);
             }
 
             slotGO.transform.localPosition = slot.homePosition;
             _slots.Add(slotGO);
         }
+    }
+
+    // Per-slot override when set; otherwise the original auto scale from puzzleSize.
+    private float GetSlotScale(SortHomeConfig.ItemSlot slot)
+    {
+        if (slot.scale > 0f) return slot.scale;
+        return _config.puzzleSize / slot.sprite.bounds.size.x * 0.5f;
     }
 
     private void SpawnItems()
@@ -145,7 +154,7 @@ public class SortHomeManager : MiniGameBase
 
             GameObject go = Instantiate(_config.itemPrefab, transform);
 
-            float itemScale = _config.puzzleSize / slot.sprite.bounds.size.x * 0.5f;
+            float itemScale = GetSlotScale(slot);
             go.transform.localScale = new Vector3(itemScale, itemScale, 1);
 
             Vector3 targetPos = slot.homePosition;

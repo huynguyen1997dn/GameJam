@@ -12,6 +12,8 @@ public class SortHomeConfig : ScriptableObject
         public Sprite sprite;
         [Tooltip("Target home position (local position relative to manager)")]
         public Vector2 homePosition;
+        [Tooltip("Uniform scale for this item and its slot. 0 = auto scale from puzzleSize (default)")]
+        public float scale = 0f;
     }
 
     [TitleGroup("Item Settings")]

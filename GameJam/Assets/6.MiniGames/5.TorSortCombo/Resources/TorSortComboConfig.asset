@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40670363f5fbf430884aa8ee7eeebe0c, type: 3}
   m_Name: TorSortComboConfig
   m_EditorClassIdentifier: Assembly-CSharp::TorSortComboConfig
-  torPaintingPrefab: {fileID: 8102848800278883323, guid: d4fcc1e46ee914de09f909d45a008057, type: 3}
-  sortHomePrefab: {fileID: 452712925982798817, guid: 2f2d4bb26ac334e5ab3732595578fb12, type: 3}
+  torPaintingPrefab: {fileID: 8102848800278883323, guid: 9f30d01b8494345428b589f4d40747cf, type: 3}
+  sortHomePrefab: {fileID: 452712925982798817, guid: 1499fcf3bbb804afbb39f9facd1f8556, type: 3}
   phaseTransitionDelay: 1
