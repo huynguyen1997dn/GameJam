@@ -986,6 +986,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: infoIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: 2dcd28bb7cfb949149c8918430385677, type: 3}
+    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: infoTitle
+      value: Vo danh
+      objectReference: {fileID: 0}
+    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: statInfos.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: statInfos.Array.data[0].label
+      value: "\u0111\xE3 c\u1EE9u"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: statInfos.Array.data[0].baseValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: statInfos.Array.data[0].dailyIncrement
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5076109134314342054, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

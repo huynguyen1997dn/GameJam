@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -72,6 +73,11 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     [Header("Dialogue (interaction = Interact)")]
     [Tooltip("DialogPopup phase played on arrival; finishing the sequence marks this node solved.")]
     [SerializeField] private PhaseId dialoguePhaseId = PhaseId.None;
+
+    [Header("Info Popup (shown on solved click)")]
+    public Sprite infoIcon;
+    public string infoTitle;
+    public List<StatInfo> statInfos = new();
 
     [Header("Day Availability")]
     public int availableFromDay = 1; // fully hidden until DayManager reaches this day
@@ -311,6 +317,14 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         var gsm = GameStateManager.Instance;
         bool solved = gsm != null && gsm.IsSolved(nodeId);
 
+        if (solved && infoIcon != null)
+        {
+            int day = DayManager.Instance != null ? DayManager.Instance.CurrentDay : 1;
+            RevertHoverFeedback();
+            UIManager.Instance.OnShowPopup(PopupId.NodeInfoPopup, infoIcon, infoTitle, day, statInfos);
+            return;
+        }
+
         if (interaction == NodeInteraction.Construct)
         {
             if (solved) return; // already built — nothing left to do here
@@ -399,6 +413,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
         Debug.Log($"[MapNode] '{nodeId}' built.");
         GameStateManager.Instance.SetNodeState(nodeId, 1);
+        interaction = NodeInteraction.Interact;
 
         _isBuilding = false;
         MapInputLock.Unlock();

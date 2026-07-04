@@ -24,6 +24,7 @@ public class GamePlayView : ViewBase
         if (TutorialInputGate.IsActive) return;
         if (nodeId != "Bridge") return;
         if (UIManager.Instance.ActivePopups.Count > 1) return;
+        if (GameStateManager.Instance != null && GameStateManager.Instance.IsSolved(nodeId)) return;
 
         UIManager.Instance.ShowNoti($"You need to collect {_cutTreeConfig.targetTreesToCut} woods");
     }
