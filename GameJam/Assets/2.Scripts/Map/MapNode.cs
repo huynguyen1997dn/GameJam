@@ -30,10 +30,29 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public string nodeId; // must match the room dev's room identifier
     public NodeInteraction interaction = NodeInteraction.OpenMiniGame;
 
+    // Per-state alignment fix for source sprites whose center/size don't match across
+    // states. Values are the visual child's absolute localPosition/localScale for that
+    // state; an empty array (or missing entry) leaves the transform untouched, so nodes
+    // without adjustments behave exactly as before. Edited via the "State Preview &
+    // Alignment" section of the MapNode inspector (MapNodeEditor).
+    [System.Serializable]
+    public class StateAdjust
+    {
+        public Vector2 offset = Vector2.zero;
+        public Vector2 scale = Vector2.one;
+    }
+
     [Header("Visuals")]
     [SerializeField] private SpriteRenderer visualRenderer; // main node visual; falls back to a renderer on this object, then any child
     public Sprite[] stateSprites; // index 0 = initial, index 1 = solved, ...
+    [HideInInspector] public StateAdjust[] stateAdjusts; // parallel to stateSprites; drawn by MapNodeEditor
     [SerializeField] private GameObject interactIndicator; // diamond child shown while the node is unlocked and unsolved; clickable too
+
+#if UNITY_EDITOR
+    // Which state the inspector is currently previewing; OnValidate re-applies it so
+    // the scene view tracks inspector edits. Never read at runtime.
+    [HideInInspector] public int editorPreviewState;
+#endif
 
     [Header("Cosmetic Only (visual, not clickable)")]
     public bool isCosmeticOnly;
@@ -173,11 +192,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             displayState = gsm.GetNodeState(nodeId);
         }
 
-        if (_spriteRenderer != null && stateSprites != null && stateSprites.Length > 0)
-        {
-            int index = Mathf.Clamp(displayState, 0, stateSprites.Length - 1);
-            _spriteRenderer.sprite = stateSprites[index];
-        }
+        ApplyStateVisual(_spriteRenderer, displayState);
 
         if (lockedIndicator != null)
             lockedIndicator.SetActive(!isCosmeticOnly && !IsInteractable());
@@ -186,6 +201,26 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         // Locked nodes show only their sprite; clicking them plays the deny feedback.
         if (interactIndicator != null)
             interactIndicator.SetActive(!isCosmeticOnly && IsInteractable() && !gsm.IsSolved(nodeId));
+    }
+
+    // Sets the sprite for a state and applies that state's alignment adjust (absolute
+    // localPosition/localScale of the visual child). Skipped when the renderer lives on
+    // this object itself: that transform is the node's world placement, not a visual
+    // child we can own.
+    private void ApplyStateVisual(SpriteRenderer sr, int displayState)
+    {
+        if (sr == null || stateSprites == null || stateSprites.Length == 0) return;
+
+        int index = Mathf.Clamp(displayState, 0, stateSprites.Length - 1);
+        if (stateSprites[index] != null) sr.sprite = stateSprites[index];
+
+        var visual = sr.transform;
+        if (visual == transform) return;
+        if (stateAdjusts == null || index >= stateAdjusts.Length || stateAdjusts[index] == null) return;
+
+        var adjust = stateAdjusts[index];
+        visual.localPosition = new Vector3(adjust.offset.x, adjust.offset.y, visual.localPosition.z);
+        visual.localScale = new Vector3(adjust.scale.x, adjust.scale.y, visual.localScale.z);
     }
 
     private void SetCollidersEnabled(bool enabled)
@@ -386,16 +421,21 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     }
 
 #if UNITY_EDITOR
-    // Keeps the editor preview on the initial-state sprite whenever stateSprites is
-    // edited, so nodes don't need the SpriteRenderer set by hand.
+    // Editor access for MapNodeEditor: the resolved visual renderer and a direct
+    // "show this state now" entry point (sprite + alignment adjust).
+    public SpriteRenderer EditorResolveVisualRenderer() => ResolveVisualRenderer();
+    public void EditorApplyState(int state) => ApplyStateVisual(ResolveVisualRenderer(), state);
+
+    // Keeps the editor preview in sync whenever the component is edited: re-applies the
+    // currently previewed state (sprite + adjust), so tweaking offsets/scales in the
+    // inspector is visible in the scene view immediately.
     private void OnValidate()
     {
         if (Application.isPlaying) return;
-        if (stateSprites == null || stateSprites.Length == 0 || stateSprites[0] == null) return;
+        if (stateSprites == null || stateSprites.Length == 0) return;
 
-        var sr = ResolveVisualRenderer();
-        if (sr != null && sr.sprite != stateSprites[0])
-            sr.sprite = stateSprites[0];
+        editorPreviewState = Mathf.Clamp(editorPreviewState, 0, stateSprites.Length - 1);
+        EditorApplyState(editorPreviewState);
     }
 #endif
 }

@@ -14,21 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapDayCameraConfigSO
   configs:
   - dayNumber: 1
-    cameraSize: 3
+    cameraSize: 10
     followCharacter: 1
     dragEnabled: 0
     allowZoom: 0
     dragBoundsMin: {x: 0, y: 0}
     dragBoundsMax: {x: 0, y: 0}
   - dayNumber: 2
-    cameraSize: 5
+    cameraSize: 10
     followCharacter: 0
     dragEnabled: 1
     allowZoom: 0
     dragBoundsMin: {x: -3, y: -1}
     dragBoundsMax: {x: 5, y: 7}
   - dayNumber: 6
-    cameraSize: 5
+    cameraSize: 10
     followCharacter: 1
     dragEnabled: 1
     allowZoom: 0
