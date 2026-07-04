@@ -365,6 +365,12 @@ public class Day1TutorialUIView : MonoBehaviour
 
     private bool TryGetWorldBounds(Transform target, out Bounds bounds)
     {
+        // Prefer the node visual's collider AABB: renderer.bounds spans the sprite's
+        // full texture rect (transparent pixels included) and overshoots the art.
+        var mapNode = target.GetComponentInParent<MapNode>();
+        if (mapNode != null && mapNode.TryGetVisualColliderBounds(out bounds))
+            return true;
+
         var renderer = target.GetComponentInChildren<Renderer>();
         if (renderer != null)
         {

@@ -120,6 +120,38 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         return null;
     }
 
+    // AABB of the collider on the visual child. Tighter than renderer.bounds, which
+    // spans the sprite's full texture rect including transparent pixels; used by the
+    // tutorial highlight so the frame hugs the clickable shape. Falls back to any
+    // non-indicator collider on this node.
+    public bool TryGetVisualColliderBounds(out Bounds bounds)
+    {
+        var visual = _spriteRenderer != null ? _spriteRenderer : ResolveVisualRenderer();
+        Collider2D collider = visual != null ? visual.GetComponent<Collider2D>() : null;
+
+        if (collider == null)
+        {
+            var colliders = _colliders ?? GetComponentsInChildren<Collider2D>(true);
+            foreach (var candidate in colliders)
+            {
+                if (candidate == null) continue;
+                if (interactIndicator != null && candidate.transform.IsChildOf(interactIndicator.transform)) continue;
+                collider = candidate;
+                break;
+            }
+        }
+
+        // Disabled colliders report empty bounds, so let callers fall back instead.
+        if (collider == null || !collider.enabled || !collider.gameObject.activeInHierarchy)
+        {
+            bounds = default;
+            return false;
+        }
+
+        bounds = collider.bounds;
+        return true;
+    }
+
     private void OnEnable()
     {
         var gsm = GameStateManager.Instance;
@@ -266,6 +298,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (eventData.dragging) return; // mid-pan: don't flash hover feedback
         if (MapInputLock.IsLocked) return;
         if (!TutorialInputGate.Allows(nodeId)) return;
         if (!IsInteractable()) return;

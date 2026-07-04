@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 /// Camera rig for the big overview map: smoothly follows the character to keep it
 /// centered, zooms via mouse scroll or two-finger pinch (legacy Input Manager), and
 /// clamps the view so it never shows outside the map bounds. Dragging (mouse or one
-/// finger) pans to nearby zones; follow resumes when the character next moves.
+/// finger) pans to nearby zones; on follow+drag days panning only works while the
+/// character is idle — movement locks the pan and follows until arrival.
 /// A tutorial can override everything with SetFocusTarget to glide onto a node.
 /// Freezes while the map is hidden (room view). Camera must be orthographic.
 /// </summary>
@@ -29,20 +30,23 @@ public class MapCameraController : MonoBehaviour
     [SerializeField] private bool dragPanEnabled = true;
 
     [Header("Day Config")]
-    [SerializeField] private MapDayCameraConfigSO dayCameraConfig;
+    [SerializeField] private DayCameraConfigSO dayCameraConfig;
 
     [Header("Tutorial Focus")]
     [SerializeField] private float focusSmoothTime = 0.4f;
 
     private Camera _cam;
-    private DayCameraConfig _currentConfig;
+    private DayCameraSettings _currentConfig;
+    private CameraBoundsBox _dayBounds; // per-day view clamp, resolved by name from the config
     private Transform _focusTarget;   // while set, the camera centers here instead of the character
+    private MapNode _focusNode;       // resolved from _focusTarget; focus centers on its visual collider AABB (matches the tutorial highlight)
     private Vector3 _followVelocity;
     private bool _pointerDown;        // pointer held, possibly still a tap
     private bool _isDragging;         // passed the drag threshold, actively panning
     private bool _isFreeLook;         // player panned away; follow is paused
     private Vector2 _pointerDownScreenPos;
     private Vector3 _dragOriginWorld; // world point pinned under the pointer while panning
+    private readonly System.Collections.Generic.List<RaycastResult> _uiRaycastResults = new System.Collections.Generic.List<RaycastResult>();
 
 
     private void Awake()
@@ -71,6 +75,7 @@ public class MapCameraController : MonoBehaviour
             Vector3 pos = transform.position;
             transform.position = new Vector3(followTarget.position.x, followTarget.position.y, pos.z);
         }
+        ClampToDayBounds();
         ClampToBounds();
     }
 
@@ -88,10 +93,14 @@ public class MapCameraController : MonoBehaviour
         ApplyDayConfig(_currentConfig);
     }
 
-    private void ApplyDayConfig(DayCameraConfig config)
+    private void ApplyDayConfig(DayCameraSettings config)
     {
         if (config == null) return;
         _cam.orthographicSize = config.cameraSize;
+
+        _dayBounds = CameraBoundsBox.Find(config.boundingBoxName);
+        if (!string.IsNullOrEmpty(config.boundingBoxName) && _dayBounds == null)
+            Debug.LogWarning($"[MapCameraController] Bounding box '{config.boundingBoxName}' not found in the scene — day {config.day} camera is only clamped by the map sprite.");
     }
 
     // Tutorial override: the camera bypasses the follow rule and glides onto this
@@ -100,11 +109,13 @@ public class MapCameraController : MonoBehaviour
     public void SetFocusTarget(Transform target)
     {
         _focusTarget = target;
+        _focusNode = target != null ? target.GetComponentInParent<MapNode>() : null;
     }
 
     public void ClearFocusTarget()
     {
         _focusTarget = null;
+        _focusNode = null;
     }
 
     private void LateUpdate()
@@ -116,7 +127,12 @@ public class MapCameraController : MonoBehaviour
             _pointerDown = false;
             _isDragging = false;
             _isFreeLook = false;
-            GlideTo(_focusTarget.position, focusSmoothTime);
+
+            Vector3 focusPosition = _focusTarget.position;
+            if (_focusNode != null && _focusNode.TryGetVisualColliderBounds(out var focusBounds))
+                focusPosition = focusBounds.center;
+
+            GlideTo(focusPosition, focusSmoothTime);
             ClampToBounds();
             return;
         }
@@ -132,34 +148,43 @@ public class MapCameraController : MonoBehaviour
             return;
         }
 
-        if (MapInputLock.IsLocked || TutorialInputGate.IsActive)
+        bool followEnabled = _currentConfig == null || _currentConfig.followCharacter;
+        bool dragEnabled = _currentConfig != null ? _currentConfig.dragEnabled : dragPanEnabled;
+
+        // Follow+drag days: the character moving takes the camera back — panning is
+        // locked (even mid-drag) and follow resumes until the character reaches its
+        // target. While the character is idle the player pans freely and the camera
+        // stays where they left it.
+        var mover = CharacterMapMover.Instance;
+        bool movingLocksPan = followEnabled && dragEnabled && mover != null && mover.IsMoving;
+
+        if (MapInputLock.IsLocked || TutorialInputGate.IsActive || movingLocksPan)
         {
-            // Scripted/tutorial moment: drop any drag, ignore zoom/pan, and glide
-            // back to the character so the player watches the guided target.
+            // Scripted/tutorial moment or movement lock: drop any drag, ignore pan,
+            // and glide back to the character so the player watches the move.
             _pointerDown = false;
             _isDragging = false;
             _isFreeLook = false;
         }
         else
         {
-            if (_currentConfig == null || _currentConfig.allowZoom)
-                HandleZoomInput();
-            else
-                _cam.orthographicSize = _currentConfig.cameraSize;
-
             HandlePanInput();
         }
 
-        // The character starting to move pulls the camera back into follow mode,
-        // unless the player is still holding a drag.
-        var mover = CharacterMapMover.Instance;
-        if (_isFreeLook && !_pointerDown && mover != null && mover.IsMoving)
-            _isFreeLook = false;
+        if (!(MapInputLock.IsLocked || TutorialInputGate.IsActive))
+        {
+            // With a day config active the size is locked to its value; free zoom
+            // only exists as a fallback when no config asset is assigned.
+            if (_currentConfig == null)
+                HandleZoomInput();
+            else
+                _cam.orthographicSize = _currentConfig.cameraSize;
+        }
 
-        if (!_isFreeLook && (_currentConfig == null || _currentConfig.followCharacter))
+        if (!_isFreeLook && followEnabled)
             FollowTarget();
 
-        ApplyDragBounds();
+        ClampToDayBounds();
         ClampToBounds();
     }
 
@@ -177,19 +202,16 @@ public class MapCameraController : MonoBehaviour
 
         bool held;
         Vector2 pos;
-        bool overUI;
         if (Input.touchCount == 1)
         {
             Touch t = Input.GetTouch(0);
             held = t.phase != TouchPhase.Ended && t.phase != TouchPhase.Canceled;
             pos = t.position;
-            overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(t.fingerId);
         }
         else
         {
             held = Input.GetMouseButton(0);
             pos = Input.mousePosition;
-            overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
         }
 
         if (!held)
@@ -201,7 +223,11 @@ public class MapCameraController : MonoBehaviour
 
         if (!_pointerDown)
         {
-            if (overUI) return; // don't start pans on UI
+            // Only genuine UI blocks a pan. IsPointerOverGameObject would also report
+            // world objects hit by the Physics2DRaycaster (map nodes), which made a
+            // drag starting on a node swallow the pan entirely — the node itself
+            // already ignores drags via eventData.dragging in OnPointerClick.
+            if (IsPointerOverUi(pos)) return;
             _pointerDown = true;
             _pointerDownScreenPos = pos;
             return;
@@ -222,6 +248,23 @@ public class MapCameraController : MonoBehaviour
         Vector3 diff = _dragOriginWorld - _cam.ScreenToWorldPoint(pos);
         diff.z = 0f;
         transform.position += diff;
+    }
+
+    // True only when the pointer is over Canvas UI (GraphicRaycaster results), not
+    // over world-space colliders picked up by a Physics2DRaycaster on the camera.
+    private bool IsPointerOverUi(Vector2 screenPos)
+    {
+        var eventSystem = EventSystem.current;
+        if (eventSystem == null) return false;
+
+        var pointerData = new PointerEventData(eventSystem) { position = screenPos };
+        _uiRaycastResults.Clear();
+        eventSystem.RaycastAll(pointerData, _uiRaycastResults);
+
+        foreach (var result in _uiRaycastResults)
+            if (result.module is UnityEngine.UI.GraphicRaycaster) return true;
+
+        return false;
     }
 
     private void HandleZoomInput()
@@ -271,29 +314,25 @@ public class MapCameraController : MonoBehaviour
     private void ClampToBounds()
     {
         if (mapBounds == null) return;
+        ClampViewInside(mapBounds.bounds);
+    }
 
-        var b = mapBounds.bounds;
+    // Tighter per-day limit from the scene's CameraBoundsBox (if the config names one).
+    private void ClampToDayBounds()
+    {
+        if (_dayBounds == null) return;
+        ClampViewInside(_dayBounds.WorldBounds);
+    }
+
+    private void ClampViewInside(Bounds b)
+    {
         float halfH = _cam.orthographicSize;
         float halfW = halfH * _cam.aspect;
 
         Vector3 pos = transform.position;
-        // If the view is wider/taller than the map on an axis, lock to the map's center there.
+        // If the view is wider/taller than the bounds on an axis, lock to their center there.
         pos.x = b.size.x <= halfW * 2f ? b.center.x : Mathf.Clamp(pos.x, b.min.x + halfW, b.max.x - halfW);
         pos.y = b.size.y <= halfH * 2f ? b.center.y : Mathf.Clamp(pos.y, b.min.y + halfH, b.max.y - halfH);
-        transform.position = pos;
-    }
-
-    private void ApplyDragBounds()
-    {
-        if (_currentConfig == null || !_currentConfig.dragEnabled) return;
-
-        if (_currentConfig.dragBoundsMin == Vector2.zero &&
-            _currentConfig.dragBoundsMax == Vector2.zero)
-            return;
-
-        Vector3 pos = transform.position;
-        pos.x = Mathf.Clamp(pos.x, _currentConfig.dragBoundsMin.x, _currentConfig.dragBoundsMax.x);
-        pos.y = Mathf.Clamp(pos.y, _currentConfig.dragBoundsMin.y, _currentConfig.dragBoundsMax.y);
         transform.position = pos;
     }
 }
