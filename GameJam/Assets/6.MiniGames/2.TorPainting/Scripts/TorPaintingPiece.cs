@@ -3,19 +3,21 @@ using UnityEngine;
 
 public class TorPaintingPiece : MonoBehaviour
 {
+    private const int SortingPlaced = 1;
+    private const int SortingIdle = 10;
+    private const int SortingDragged = 100;
+
     [SerializeField] private SpriteRenderer _sprite;
-    [SerializeField] private BoxCollider2D _collider;
+    [SerializeField] private PolygonCollider2D _collider;
 
     private TorPaintingManager _manager;
     private Vector3 _targetPosition;
-    private Vector3 _scatterPosition;
-    private Vector3 _dragOffset;
     private bool _isPlaced;
     private bool _isDragging;
-    private int _originalSortOrder;
     private Vector3 _originalScale;
 
     public bool IsPlaced => _isPlaced;
+    public int SortingOrder => _sprite.sortingOrder;
     public int GridRow { get; private set; }
     public int GridCol { get; private set; }
 
@@ -24,25 +26,22 @@ public class TorPaintingPiece : MonoBehaviour
         _manager = manager;
         _sprite.sprite = sprite;
         _targetPosition = targetPos;
-        _scatterPosition = scatterPos;
         GridRow = row;
         GridCol = col;
         _isPlaced = false;
         _isDragging = false;
 
-        _originalSortOrder = _sprite.sortingOrder;
         _originalScale = transform.localScale;
+        _sprite.sortingOrder = SortingIdle;
 
-        transform.localPosition = _scatterPosition;
+        transform.localPosition = scatterPos;
         transform.localRotation = Quaternion.Euler(0, 0, Random.Range(-15f, 15f));
     }
 
-    public void FitColliderToSprite()
+    public void SetShape(Vector2[] path)
     {
-        if (_sprite != null && _sprite.sprite != null && _collider != null)
-        {
-            _collider.size = _sprite.sprite.bounds.size;
-        }
+        _collider.pathCount = 1;
+        _collider.SetPath(0, path);
     }
 
     public void LockFinal()
@@ -51,37 +50,50 @@ public class TorPaintingPiece : MonoBehaviour
         transform.localPosition = _targetPosition;
         transform.localScale = _originalScale;
         transform.localRotation = Quaternion.identity;
-        _sprite.sortingOrder = _originalSortOrder;
+        _sprite.sortingOrder = SortingPlaced;
+        _collider.enabled = false;
     }
 
-    private void OnMouseDown()
+    public bool HasVisiblePixelAt(Vector2 worldPos)
     {
-        if (_isPlaced || _manager.IsGameOver) return;
-        if (!enabled) return;
+        Sprite s = _sprite.sprite;
+        if (s == null || !s.texture.isReadable) return true;
+
+        Vector2 local = transform.InverseTransformPoint(worldPos);
+        Vector2 px = local * s.pixelsPerUnit + s.pivot;
+        int x = Mathf.FloorToInt(px.x);
+        int y = Mathf.FloorToInt(px.y);
+        if (x < 0 || y < 0 || x >= s.texture.width || y >= s.texture.height) return false;
+        return s.texture.GetPixel(x, y).a > 0.1f;
+    }
+
+    public void BeginDrag(Vector3 pointerWorld)
+    {
+        if (_isPlaced) return;
 
         _isDragging = true;
-        _sprite.sortingOrder = 100;
+        _sprite.sortingOrder = SortingDragged;
 
-        Vector3 mouseWorldPos = GetMouseWorldPos();
-        _dragOffset = transform.position - mouseWorldPos;
-
+        transform.DOKill();
         transform.DOScale(_originalScale * 1.1f, 0.15f);
+        transform.DOLocalRotate(Vector3.zero, 0.15f);
+
+        MoveCenterTo(pointerWorld);
     }
 
-    private void OnMouseDrag()
+    public void Drag(Vector3 pointerWorld)
     {
         if (!_isDragging || _isPlaced) return;
 
-        Vector3 mouseWorldPos = GetMouseWorldPos();
-        transform.position = mouseWorldPos + _dragOffset;
+        MoveCenterTo(pointerWorld);
 
-        float dist = Vector3.Distance(transform.position, _targetPosition);
-        _sprite.color = dist <= _manager.Config.snapDistance * 2f
+        float dist = Vector3.Distance(transform.localPosition, _targetPosition);
+        _sprite.color = dist <= _manager.SnapDistance * 2f
             ? new Color(0.7f, 1f, 0.7f, 1f)
             : Color.white;
     }
 
-    private void OnMouseUp()
+    public void EndDrag()
     {
         if (!_isDragging) return;
         _isDragging = false;
@@ -89,22 +101,30 @@ public class TorPaintingPiece : MonoBehaviour
         transform.DOScale(_originalScale, 0.15f);
         _sprite.color = Color.white;
 
-        float dist = Vector3.Distance(transform.position, _targetPosition);
-
-        if (dist <= _manager.Config.snapDistance)
+        float dist = Vector3.Distance(transform.localPosition, _targetPosition);
+        if (dist <= _manager.SnapDistance)
         {
             SnapToTarget();
         }
         else
         {
-            ReturnToScatter();
+            // Wrong spot: the piece stays where the player dropped it.
+            _sprite.sortingOrder = SortingIdle;
         }
+    }
+
+    private void MoveCenterTo(Vector3 pointerWorld)
+    {
+        Vector3 delta = pointerWorld - _sprite.bounds.center;
+        delta.z = 0;
+        transform.position += delta;
     }
 
     private void SnapToTarget()
     {
         _isPlaced = true;
-        _sprite.sortingOrder = _originalSortOrder;
+        _sprite.sortingOrder = SortingPlaced;
+        _collider.enabled = false;
 
         transform.DOKill();
         transform.localScale = _originalScale;
@@ -115,31 +135,9 @@ public class TorPaintingPiece : MonoBehaviour
         _manager.OnPiecePlaced(this);
     }
 
-    private void ReturnToScatter()
-    {
-        _sprite.sortingOrder = _originalSortOrder;
-
-        transform.DOKill();
-        transform.localScale = _originalScale;
-        transform.DOLocalMove(_scatterPosition, 0.3f).SetEase(Ease.OutBounce);
-        transform.DOLocalRotate(
-            new Vector3(0, 0, Random.Range(-15f, 15f)), 0.3f).SetEase(Ease.OutQuad);
-    }
-
-    private Vector3 GetMouseWorldPos()
-    {
-        Vector3 mousePos = Input.mousePosition;
-        if (Camera.main != null)
-        {
-            mousePos.z = Mathf.Abs(Camera.main.transform.position.z);
-            return Camera.main.ScreenToWorldPoint(mousePos);
-        }
-        return Vector3.zero;
-    }
-
     private void OnValidate()
     {
         if (!_sprite) _sprite = GetComponent<SpriteRenderer>();
-        if (!_collider) _collider = GetComponent<BoxCollider2D>();
+        if (!_collider) _collider = GetComponent<PolygonCollider2D>();
     }
 }

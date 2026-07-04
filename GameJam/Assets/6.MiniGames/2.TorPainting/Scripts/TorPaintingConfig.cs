@@ -17,8 +17,16 @@ public class TorPaintingConfig : ScriptableObject
     public float puzzleSize = 6f;
     [Tooltip("Radius within which pieces are scattered")]
     public float scatterRadius = 4f;
-    [Tooltip("Distance threshold for snapping a piece to its target")]
-    public float snapDistance = 0.5f;
+    [Tooltip("Snap threshold as a fraction of the smaller piece dimension")]
+    [Range(0.05f, 0.5f)]
+    public float snapDistancePercent = 0.35f;
+
+    [TitleGroup("Torn Edges")]
+    [Tooltip("How far tear lines wander from the straight grid line, as a fraction of piece size")]
+    [Range(0f, 0.25f)]
+    public float tearAmplitude = 0.12f;
+    [Tooltip("Width in pixels of the white paper-fiber border along torn edges (0 = off)")]
+    public float tearWhiteWidth = 4f;
 
     [TitleGroup("Ghost Reference")]
     [Range(0f, 1f)]

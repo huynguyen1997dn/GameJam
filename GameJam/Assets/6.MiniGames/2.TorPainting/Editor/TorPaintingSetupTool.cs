@@ -59,7 +59,7 @@ public class TorPaintingSetupTool : EditorWindow
 
         GameObject go = new GameObject("PuzzlePiece");
         go.AddComponent<SpriteRenderer>();
-        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        PolygonCollider2D col = go.AddComponent<PolygonCollider2D>();
         col.isTrigger = false;
         go.AddComponent<TorPaintingPiece>();
 
