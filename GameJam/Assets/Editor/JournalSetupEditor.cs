@@ -643,6 +643,110 @@ public static class JournalSetupEditor
     }
 
     // ==================================================================
+    //  MENU 3 — INSTALL INTO GAMEPLAYVIEW (UIManager flow)
+    // ==================================================================
+
+    private const string GamePlayViewPath = "Assets/8.Resources/Resources/UI/Views/GamePlayView.prefab";
+    private const string DaySystemUIPath = "Assets/5.Prefabs/NavigatingMap/DaySystemUI.prefab";
+
+    // Moves the map-screen UI under UIManager control: everything becomes part of the
+    // GamePlayView prefab, which UIManager instantiates/shows/hides. After running
+    // this, delete the scene copies of DaySystemUI, JournalButton, JournalOverlay and
+    // DayTransitionOverlay — but KEEP JournalSystem (manager, not UI) in the scene.
+    [MenuItem("GameJam/Journal/3. Install Map UI Into GamePlayView Prefab")]
+    public static void InstallMapUIIntoGamePlayView()
+    {
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(GamePlayViewPath) == null)
+        {
+            EditorUtility.DisplayDialog("Journal Setup",
+                $"GamePlayView prefab not found at:\n{GamePlayViewPath}", "OK");
+            return;
+        }
+
+        var root = PrefabUtility.LoadPrefabContents(GamePlayViewPath);
+        try
+        {
+            var rootT = root.transform;
+
+            // Day HUD comes in as a nested DaySystemUI prefab so it keeps its own asset.
+            var dayHud = root.GetComponentInChildren<DayHUD>(true);
+            Transform daySystem = dayHud != null ? TopLevelChildOf(dayHud.transform, rootT) : null;
+            if (daySystem == null)
+            {
+                var daySystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DaySystemUIPath);
+                if (daySystemPrefab != null)
+                {
+                    var instance = (GameObject)PrefabUtility.InstantiatePrefab(daySystemPrefab, rootT);
+                    daySystem = instance.transform;
+                    StretchFull((RectTransform)daySystem);
+                }
+                else
+                {
+                    Debug.LogWarning($"[JournalSetup] DaySystemUI prefab not found at {DaySystemUIPath} — skipped.");
+                }
+            }
+
+            var mapButton = root.GetComponentInChildren<JournalMapButton>(true);
+            var buttonGO = mapButton != null ? mapButton.gameObject : BuildMapButton(rootT);
+
+            var journalView = root.GetComponentInChildren<JournalUIView>(true);
+            var overlayGO = journalView != null ? journalView.gameObject : BuildOverlay(rootT);
+
+            var transition = root.GetComponentInChildren<DayTransitionOverlay>(true);
+            var transitionGO = transition != null ? transition.gameObject : BuildDayTransitionOverlay(rootT);
+
+            // Render order (bottom → top): day HUD, journal button, journal overlay,
+            // day transition — the darkened screen must cover everything, journal included.
+            if (daySystem != null) daySystem.SetAsLastSibling();
+            buttonGO.transform.SetAsLastSibling();
+            overlayGO.transform.SetAsLastSibling();
+            transitionGO.transform.SetAsLastSibling();
+
+            PrefabUtility.SaveAsPrefabAsset(root, GamePlayViewPath);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+
+        Debug.Log("[JournalSetup] Map UI installed into GamePlayView.prefab. Now delete the " +
+                  "scene copies of DaySystemUI, JournalButton, JournalOverlay and " +
+                  "DayTransitionOverlay — keep JournalSystem (and Managers) in the scene.");
+    }
+
+    /// <summary>Walks up from a nested object to the direct child of `root` containing it.</summary>
+    private static Transform TopLevelChildOf(Transform descendant, Transform root)
+    {
+        var t = descendant;
+        while (t.parent != null && t.parent != root) t = t.parent;
+        return t.parent == root ? t : descendant;
+    }
+
+    // Mirrors the hand-built scene object: black full-screen image (raycastTarget stays
+    // on — the CanvasGroup controls whether it swallows clicks), inactive DAY XX label.
+    private static GameObject BuildDayTransitionOverlay(Transform parent)
+    {
+        var rt = NewRect("DayTransitionOverlay", parent);
+        StretchFull(rt);
+        AddPlainImage(rt, Color.black);
+        var canvasGroup = rt.gameObject.AddComponent<CanvasGroup>();
+        canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
+
+        var label = AddText(rt, "DayLabel", "DAY 01", 110, Color.white,
+            TextAlignmentOptions.Center, FontStyles.Bold);
+        StretchFull((RectTransform)label.transform);
+        label.gameObject.SetActive(false);
+
+        var overlay = rt.gameObject.AddComponent<DayTransitionOverlay>();
+        var so = new SerializedObject(overlay);
+        so.FindProperty("canvasGroup").objectReferenceValue = canvasGroup;
+        so.FindProperty("dayLabel").objectReferenceValue = label;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        return rt.gameObject;
+    }
+
+    // ==================================================================
     //  SMALL BUILD HELPERS
     // ==================================================================
 

@@ -23,6 +23,25 @@ Everything the tool generates is placeholder styling (built-in sprites, TMP defa
 font) positioned for the 1125×2436 portrait canvas — restyle freely; only keep the
 serialized references intact.
 
+## UIManager Flow (map UI inside GamePlayView)
+
+The project shows screens through `UIManager` (MainMenuView → GamePlayView). To run
+the map UI through it instead of keeping scene copies:
+
+1. Menu: **GameJam → Journal → 3. Install Map UI Into GamePlayView Prefab**
+   Adds to `UI/Views/GamePlayView.prefab`: a nested `DaySystemUI` instance,
+   `JournalButton`, `JournalOverlay`, and a `DayTransitionOverlay` — ordered so the
+   day-transition fade covers everything, journal included.
+2. In the map scene, delete the now-duplicated scene objects: `DaySystemUI`,
+   `JournalButton`, `JournalOverlay`, `DayTransitionOverlay`.
+   **Keep `JournalSystem`** (manager + cheats — state, not UI) and `Managers`.
+3. Press Play: MainMenuView appears; its Play button calls
+   `UIManager.OnShowView(GamePlayView)`, which brings in the whole map HUD.
+
+If UIManager hides GamePlayView while the journal is open, `JournalUIView` closes
+the journal on disable and releases the map input lock automatically. The install
+is idempotent — rerunning it only fixes ordering and fills in missing pieces.
+
 ## 1. UI Hierarchy (generated)
 
 ```text
@@ -63,6 +82,11 @@ JournalSystem (scene root object)
  ├── JournalManager                 (database assigned)
  └── JournalDebugCheats             (dev only)
 ```
+
+With the UIManager flow (menu 3), the same `JournalButton` / `JournalOverlay` /
+`DayTransitionOverlay` subtrees live inside `UI/Views/GamePlayView.prefab` after
+the nested `DaySystemUI`, instead of directly under the map canvas. `JournalSystem`
+always stays in the scene.
 
 ## 2. Required Serialized References
 

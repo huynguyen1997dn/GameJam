@@ -17,6 +17,8 @@ public class JournalManager : Singleton<JournalManager>
 
     [Tooltip("If on, advancing to a new day auto-writes the pages of every FINISHED day " +
              "(dayNumber < the new day): reaching Day 2 unlocks the D1 entry, never D2 itself. " +
+             "If off, a day's page is written the moment its objective completes (when the " +
+             "Advance button appears), while still on that day. " +
              "Pair with a dayNumber-0 prologue entry marked unlockedFromStart.")]
     [SerializeField] private bool autoUnlockEntriesByDay = true;
 
@@ -59,13 +61,21 @@ public class JournalManager : Singleton<JournalManager>
     private void OnEnable()
     {
         var dm = DayManager.Instance;
-        if (dm != null) dm.OnDayChanged += HandleDayChanged;
+        if (dm != null)
+        {
+            dm.OnDayChanged += HandleDayChanged;
+            dm.OnObjectiveStateChanged += HandleObjectiveStateChanged;
+        }
     }
 
     private void OnDisable()
     {
         var dm = DayManager.Instance;
-        if (dm != null) dm.OnDayChanged -= HandleDayChanged;
+        if (dm != null)
+        {
+            dm.OnDayChanged -= HandleDayChanged;
+            dm.OnObjectiveStateChanged -= HandleObjectiveStateChanged;
+        }
 
         // Never leave the map frozen behind — same guarantee the build/transition code makes.
         if (IsOpen)
@@ -310,6 +320,26 @@ public class JournalManager : Singleton<JournalManager>
         foreach (var entry in database.Entries)
         {
             if (entry == null || entry.dayNumber >= newDay) continue;
+            UnlockEntry(entry.entryId);
+        }
+    }
+
+    // Flag-off mode: the day's page is written the moment its objective completes —
+    // the same signal that reveals DayHUD's Advance button. IsCurrentObjectiveComplete,
+    // not CanAdvance, so the final day (no next day, button never shows) still writes.
+    private void HandleObjectiveStateChanged()
+    {
+        if (autoUnlockEntriesByDay || database == null) return;
+
+        var dm = DayManager.Instance;
+        if (dm == null || !dm.IsCurrentObjectiveComplete) return;
+
+        // <= CurrentDay is a self-healing catch-up: earlier days were necessarily
+        // completed to get here, so any unlock moment missed while disabled heals now.
+        foreach (var entry in database.Entries)
+        {
+            if (entry == null || entry.unlockedFromStart) continue;
+            if (entry.dayNumber > dm.CurrentDay) continue;
             UnlockEntry(entry.entryId);
         }
     }

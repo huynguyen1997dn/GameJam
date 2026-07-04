@@ -108,8 +108,19 @@ public class JournalUIView : MonoBehaviour
         jm.OnContentChanged -= HandleContentChanged;
         jm.OnUnreadStateChanged -= HandleUnreadChanged;
 
-        // Tweens die with the object — never leave the overlay half-faded over the map.
+        // UIManager can hide the whole GamePlayView while the journal is open: close it
+        // so the map never stays locked, and snap back to the rest state ourselves —
+        // we just unsubscribed, so HandleClosed won't run for this CloseJournal.
         if (canvasGroup != null) DOTween.Kill(canvasGroup);
+        HideToastImmediate();
+        if (jm.IsOpen) jm.CloseJournal();
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 0f;
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.interactable = false;
+        }
+        if (root != null) root.SetActive(false);
     }
 
     // ---------------------- MANAGER EVENTS ----------------------
