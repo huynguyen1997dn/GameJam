@@ -296,10 +296,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6030260488854955816}
-  - component: {fileID: 2148810515771886526}
   - component: {fileID: 6302952051151098910}
+  - component: {fileID: 2675399879541534671}
   m_Layer: 5
-  m_Name: MiniGameGameView_TorPainting
+  m_Name: MiniGameGameView_TorSortCombo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -325,24 +325,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2148810515771886526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3321073998596019024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e03bc25698ad64310aa8189263a43a45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MiniGameGameView_TorPainting
-  canvasGroup: {fileID: 6302952051151098910}
-  _progressSlider: {fileID: 1773067156086300324}
-  _completeButton: {fileID: 2820315477106267981}
-  _progressText: {fileID: 3780415475468229876}
-  _backgroundImage: {fileID: 926675033012741981}
-  _config: {fileID: 11400000, guid: 2910e2122a8b04532baf7630ff9466a1, type: 2}
 --- !u!225 &6302952051151098910
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -355,6 +337,25 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &2675399879541534671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3321073998596019024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db65412b3e0434c7fae479e2ef19eb85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MiniGameGameView_TorSortCombo
+  canvasGroup: {fileID: 6302952051151098910}
+  _progressSlider: {fileID: 1773067156086300324}
+  _completeButton: {fileID: 2820315477106267981}
+  _progressText: {fileID: 3780415475468229876}
+  _backgroundImage: {fileID: 926675033012741981}
+  _config: {fileID: 11400000, guid: 28abe4975d94f4987b1e075885a1b5fc, type: 2}
+  _phaseText: {fileID: 0}
 --- !u!1 &3842258566920678379
 GameObject:
   m_ObjectHideFlags: 0

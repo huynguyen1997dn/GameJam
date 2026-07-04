@@ -23,6 +23,7 @@ public class SortHomeManager : MiniGameBase
     {
         if (!_cam) _cam = Camera.main;
         if (!ValidateConfig()) return;
+        CreateBackdrop();
         CreateBackground();
         CreatePlaceholders();
         SpawnItems();
@@ -46,6 +47,39 @@ public class SortHomeManager : MiniGameBase
             return false;
         }
         return true;
+    }
+
+    private void CreateBackdrop()
+    {
+        if (_config.backgroundSprite == null) return;
+
+        GameObject bgGO = new GameObject("Backdrop");
+        bgGO.transform.SetParent(transform, false);
+
+        SpriteRenderer sr = bgGO.AddComponent<SpriteRenderer>();
+        sr.sprite = _config.backgroundSprite;
+        sr.sortingOrder = -20;
+
+        // Cover the whole camera view, centered on the camera.
+        Vector2 spriteSize = _config.backgroundSprite.bounds.size;
+        float scale;
+        if (_cam != null && _cam.orthographic)
+        {
+            float viewH = _cam.orthographicSize * 2f;
+            float viewW = viewH * _cam.aspect;
+            scale = Mathf.Max(viewW / spriteSize.x, viewH / spriteSize.y);
+        }
+        else
+        {
+            scale = _config.puzzleSize / spriteSize.x;
+        }
+        bgGO.transform.localScale = new Vector3(scale, scale, 1);
+
+        if (_cam != null)
+        {
+            Vector3 camPos = _cam.transform.position;
+            bgGO.transform.position = new Vector3(camPos.x, camPos.y, transform.position.z);
+        }
     }
 
     private void CreateBackground()

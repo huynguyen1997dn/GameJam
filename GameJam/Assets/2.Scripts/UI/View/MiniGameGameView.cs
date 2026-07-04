@@ -7,6 +7,7 @@ public abstract class MiniGameGameView : ViewBase
     [SerializeField] protected Slider _progressSlider;
     [SerializeField] protected Button _completeButton;
     [SerializeField] protected TextMeshProUGUI _progressText;
+    [SerializeField] protected Image _backgroundImage;
 
     public abstract MiniGameType GameType { get; }
     
@@ -44,9 +45,25 @@ public abstract class MiniGameGameView : ViewBase
         EventDispatcher.Unsubscribe(EventId.PreCompleteGame, OnPreGameComplete);
     }
 
+    protected virtual bool IsProgressForThisView(MiniGameType type)
+    {
+        return type == GameType;
+    }
+
+    // UI-space background (Screen Space - Overlay canvas draws over the world,
+    // so only use this for sprites with a transparent gameplay area, e.g. frames).
+    // Pass null to hide the background image.
+    protected void ApplyBackground(Sprite sprite)
+    {
+        if (_backgroundImage == null) return;
+        _backgroundImage.gameObject.SetActive(sprite != null);
+        if (sprite != null)
+            _backgroundImage.sprite = sprite;
+    }
+
     protected virtual void OnProgressUpdate(MiniGameProgressData data)
     {
-        if (data.gameType != GameType) return;
+        if (!IsProgressForThisView(data.gameType)) return;
 
         if (_progressSlider != null)
         {

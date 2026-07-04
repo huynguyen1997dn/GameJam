@@ -13,6 +13,7 @@ public partial class ViewID
     public static string MiniGameGameView_TorPainting = "MiniGameGameView_TorPainting";
     public static string MiniGameGameView_SortHome = "MiniGameGameView_SortHome";
     public static string MiniGameGameView_TheDarkForest = "MiniGameGameView_TheDarkForest";
+    public static string MiniGameGameView_TorSortCombo = "MiniGameGameView_TorSortCombo";
 }
 
 public partial class PopupId

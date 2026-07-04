@@ -11,7 +11,9 @@ public class MiniGameGameView_TorPainting : MiniGameGameView
     protected override void OnShow()
     {
         base.OnShow();
-        if (_config != null && _progressText != null)
+        if (_config == null) return;
+
+        if (_progressText != null)
             _progressText.text = $"0/{_config.pieceCount}";
     }
 }

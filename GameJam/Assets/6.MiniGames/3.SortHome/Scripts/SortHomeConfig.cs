@@ -32,6 +32,11 @@ public class SortHomeConfig : ScriptableObject
     [Tooltip("Distance threshold for snapping an item to its target")]
     public float snapDistance = 0.5f;
 
+    [TitleGroup("Background")]
+    [Tooltip("Backdrop rendered in world space behind the map, scaled to fill the camera (optional)")]
+    [UnityEngine.Serialization.FormerlySerializedAs("viewBackground")]
+    public Sprite backgroundSprite;
+
     [TitleGroup("Audio")]
     public string placeSoundId = "AUDIO_PLACE";
     public string completeSoundId = "AUDIO_COMPLETE";

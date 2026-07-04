@@ -33,6 +33,11 @@ public class TorPaintingConfig : ScriptableObject
     [Tooltip("Opacity of the ghost reference image in background")]
     public float ghostAlpha = 0.2f;
 
+    [TitleGroup("Background")]
+    [Tooltip("Backdrop rendered in world space behind the puzzle, scaled to fill the camera (optional)")]
+    [UnityEngine.Serialization.FormerlySerializedAs("viewBackground")]
+    public Sprite backgroundSprite;
+
     [TitleGroup("Audio")]
     public string placeSoundId = "AUDIO_PLACE";
     public string completeSoundId = "AUDIO_COMPLETE";

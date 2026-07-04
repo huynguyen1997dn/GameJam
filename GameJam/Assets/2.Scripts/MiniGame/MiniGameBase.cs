@@ -8,6 +8,7 @@ public partial class EventId
     public const string CompleteGame = "CompleteGame";
     public const string FailGame = "FailGame";
     public const string MiniGameProgressUpdate = "MiniGameProgressUpdate";
+    public const string MiniGamePhaseChanged = "MiniGamePhaseChanged";
 
 }
 public abstract class MiniGameBase : MonoBehaviour
@@ -18,6 +19,10 @@ public abstract class MiniGameBase : MonoBehaviour
     public event Action OnGameComplete;
     public event Action OnGameFailed;
 
+    // When true, CompleteGame only fires OnGameComplete without dispatching global
+    // events - used when this game runs as a phase inside a combo minigame.
+    public bool SuppressCompleteEvents { get; set; }
+
     public virtual void Init() { }
     public virtual void StartGame() { }
     public virtual void EndGame() { }
@@ -25,7 +30,8 @@ public abstract class MiniGameBase : MonoBehaviour
     protected void CompleteGame()
     {
         OnGameComplete?.Invoke();
-        EventDispatcher.Dispatch(EventId.PreCompleteGame);
+        if (!SuppressCompleteEvents)
+            EventDispatcher.Dispatch(EventId.PreCompleteGame);
     }
 
     protected void FailGame()

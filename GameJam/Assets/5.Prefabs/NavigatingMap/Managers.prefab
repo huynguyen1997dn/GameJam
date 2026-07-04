@@ -86,7 +86,7 @@ MonoBehaviour:
     game: 0
   - nodeId: Watchtower
     game: 3
-  - nodeId: AbandonWell
+  - nodeId: Shrine
     game: 4
   miniGameContainer: {fileID: 0}
 --- !u!114 &2598189787934983456

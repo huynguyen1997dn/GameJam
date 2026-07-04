@@ -13,6 +13,7 @@ public class MiniGameManager : Singleton<MiniGameManager>
         { MiniGameType.TorPainting, ViewID.MiniGameGameView_TorPainting },
         { MiniGameType.SortHome, ViewID.MiniGameGameView_SortHome },
         { MiniGameType.TheDarkForest, ViewID.MiniGameGameView_TheDarkForest },
+        { MiniGameType.TorSortCombo, ViewID.MiniGameGameView_TorSortCombo },
     };
 
     public MiniGameBase CurrentMiniGame => _currentMiniGame;
