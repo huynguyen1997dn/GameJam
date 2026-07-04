@@ -286,6 +286,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7052173959953459397}
   - component: {fileID: 5360937881875875937}
+  - component: {fileID: 627522567515092890}
+  - component: {fileID: 131294942752863739}
   m_Layer: 0
   m_Name: InteractableNode
   m_TagString: Untagged
@@ -328,7 +330,11 @@ MonoBehaviour:
   stateSprites:
   - {fileID: 21300000, guid: 4db04b3ef6cb0493793d56eaa7c1dc32, type: 3}
   - {fileID: 21300000, guid: 834220cdc854b417a94b2171154efa71, type: 3}
-  stateAdjusts: []
+  stateAdjusts:
+  - offset: {x: 0, y: 0}
+    scale: {x: 1, y: 1}
+  - offset: {x: 0, y: 0}
+    scale: {x: 1, y: 1}
   interactIndicator: {fileID: 5023453960587151702}
   editorPreviewState: 0
   isCosmeticOnly: 0
@@ -340,7 +346,39 @@ MonoBehaviour:
   buildDuration: 1.5
   buildBlockedMessage: Need X woods
   dialoguePhaseId: 0
+  infoIcon: {fileID: 0}
+  infoTitle: 
+  statInfos: []
   availableFromDay: 1
   destinationWaypoint: {fileID: 0}
   hoverScale: 1
   hoverTint: {r: 1, g: 0.95, b: 0.75, a: 1}
+--- !u!210 &627522567515092890
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8680236923399006624}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 45
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
+--- !u!114 &131294942752863739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8680236923399006624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43f24cf49f33434eaf9c920f8c5925e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IsometricUnit
+  dynamic: 0
+  sortPointOffset: {x: 0, y: -0.45}
+  precisionY: 100
+  precisionX: 2

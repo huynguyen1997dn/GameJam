@@ -1077,6 +1077,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1253468505699081537, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: infoIcon
       value: 
@@ -1100,6 +1104,10 @@ PrefabInstance:
     - target: {fileID: 1344430490380929700, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: statInfos.Array.data[0].dailyIncrement
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1704054803443415490, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5076109134314342054, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_LocalPosition.x
