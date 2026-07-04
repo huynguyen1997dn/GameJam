@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 7537225920510759368}
   - component: {fileID: 3920960120687470847}
   - component: {fileID: 2871096178123478860}
+  - component: {fileID: -1690579185825614131}
+  - component: {fileID: 145435131272306967}
   m_Layer: 0
   m_Name: NPC_Elder
   m_TagString: Untagged
@@ -49,6 +51,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCController
   npcType: 0
   npcId: 
+  _skeletonAnimation: {fileID: 0}
+  _nameText: {fileID: 0}
   _agent: {fileID: 2871096178123478860}
 --- !u!195 &2871096178123478860
 NavMeshAgent:
@@ -72,6 +76,35 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!210 &-1690579185825614131
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356025445623663220}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
+--- !u!114 &145435131272306967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356025445623663220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43f24cf49f33434eaf9c920f8c5925e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IsometricUnit
+  dynamic: 1
+  sortPointOffset: {x: 0, y: 0}
+  precisionY: 100
+  precisionX: 2
 --- !u!1 &3327990563016749588
 GameObject:
   m_ObjectHideFlags: 0

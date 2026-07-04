@@ -192,6 +192,8 @@ GameObject:
   - component: {fileID: 320414467152739692}
   - component: {fileID: 6546206461398379629}
   - component: {fileID: 3377213189387214436}
+  - component: {fileID: -1301332181732516938}
+  - component: {fileID: 3447539673940292800}
   m_Layer: 0
   m_Name: NPC_LittleGirl
   m_TagString: Untagged
@@ -230,6 +232,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCController
   npcType: 2
   npcId: 
+  _skeletonAnimation: {fileID: 0}
+  _nameText: {fileID: 0}
   _agent: {fileID: 3377213189387214436}
 --- !u!195 &3377213189387214436
 NavMeshAgent:
@@ -253,6 +257,35 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!210 &-1301332181732516938
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6626573702483467983}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
+--- !u!114 &3447539673940292800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6626573702483467983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43f24cf49f33434eaf9c920f8c5925e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IsometricUnit
+  dynamic: 1
+  sortPointOffset: {x: 0, y: 0}
+  precisionY: 100
+  precisionX: 2
 --- !u!1 &8546323564650599098
 GameObject:
   m_ObjectHideFlags: 0
