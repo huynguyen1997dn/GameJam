@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Spine.Unity;
 using UnityEngine;
 
 /// <summary>
@@ -35,9 +36,15 @@ public class CharacterMapMover : MonoBehaviour
     [Header("Sound")]
     [SerializeField] private float walkSfxInterval = 0.5f; // seconds between AUDIO_WALK plays while moving
 
+    [Header("Animation")]
+    [SerializeField] private SkeletonAnimation _skeletonFront;
+    [SerializeField] private SkeletonAnimation _skeletonBack;
+
     public bool IsMoving { get; private set; }
 
     private Vector3 _visualBaseLocalPos;
+    private SkeletonAnimation _currentSkeleton;
+    private string _currentAnim;
 
     private void Awake()
     {
@@ -45,6 +52,19 @@ public class CharacterMapMover : MonoBehaviour
         if (visual != null) _visualBaseLocalPos = visual.localPosition;
         if (currentWaypoint != null)
             transform.position = currentWaypoint.transform.position;
+
+        var skeletons = GetComponentsInChildren<SkeletonAnimation>();
+        if (_skeletonFront == null && skeletons.Length > 0)
+            _skeletonFront = skeletons[0];
+        if (_skeletonBack == null && skeletons.Length > 1)
+            _skeletonBack = skeletons[1];
+    }
+
+    private void Start()
+    {
+        var defaultSkel = _skeletonFront ?? _skeletonBack;
+        if (defaultSkel != null)
+            PlayAnimation(defaultSkel, "1.Idle");
     }
 
     // Returns false when movement can't start — target missing, or every route is
@@ -111,12 +131,40 @@ public class CharacterMapMover : MonoBehaviour
         {
             Vector3 from = path[i - 1].transform.position;
             Vector3 to = path[i].transform.position;
+
+            SkeletonAnimation skel = SkeletonForDirection(from, to);
+            if (skel != null)
+                PlayAnimation(skel, "3.Run");
+
             yield return hopEnabled ? HopSegment(from, to) : SlideSegment(from, to);
             currentWaypoint = path[i];
         }
 
         IsMoving = false;
+        PlayAnimation(_skeletonFront ?? _skeletonBack, "1.Idle");
         onArrive?.Invoke();
+    }
+
+    private void PlayAnimation(SkeletonAnimation skeleton, string anim)
+    {
+        if (skeleton == null) return;
+        if (skeleton == _currentSkeleton && _currentAnim == anim) return;
+        if (skeleton.AnimationState == null) return;
+
+        if (_skeletonFront != null) _skeletonFront.gameObject.SetActive(skeleton == _skeletonFront);
+        if (_skeletonBack != null) _skeletonBack.gameObject.SetActive(skeleton == _skeletonBack);
+
+        skeleton.AnimationState.SetAnimation(0, anim, true);
+        _currentSkeleton = skeleton;
+        _currentAnim = anim;
+    }
+
+    private SkeletonAnimation SkeletonForDirection(Vector3 from, Vector3 to)
+    {
+        float dy = to.y - from.y;
+        float dx = to.x - from.x;
+        bool useBack = dy > 0.1f || dx < -0.1f;
+        return useBack ? _skeletonBack : _skeletonFront;
     }
 
     private IEnumerator WalkSfxLoop()

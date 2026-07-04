@@ -9,7 +9,8 @@ public class NPCController : MonoBehaviour
 {
     [SerializeField] private NPCType npcType;
     [SerializeField] private string npcId;
-    [SerializeField] private SkeletonAnimation _skeletonAnimation;
+    [SerializeField] private SkeletonAnimation _skeletonFront;
+    [SerializeField] private SkeletonAnimation _skeletonBack;
     [SerializeField] private TextMeshPro _nameText;
 
     [SerializeField] private NavMeshAgent _agent;
@@ -17,6 +18,10 @@ public class NPCController : MonoBehaviour
     private Coroutine _moveRoutine;
     private Coroutine _wanderRoutine;
     private string _assignedName;
+
+    private SkeletonAnimation _currentSkeleton;
+    private string _currentAnim;
+    private float _lastDirZ;
 
     public static readonly string[] NPC_NAMES = { "aila", "cora", "edda", "finn", "milo", "nora" };
     public static readonly string NPC_LITTLE_GIRL = "lysa";
@@ -31,8 +36,11 @@ public class NPCController : MonoBehaviour
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
-        if (_skeletonAnimation == null)
-            _skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
+        var skeletons = GetComponentsInChildren<SkeletonAnimation>();
+        if (_skeletonFront == null && skeletons.Length > 0)
+            _skeletonFront = skeletons[0];
+        if (_skeletonBack == null && skeletons.Length > 1)
+            _skeletonBack = skeletons[1];
         if (_nameText == null)
             _nameText = GetComponentInChildren<TextMeshPro>();
     }
@@ -41,6 +49,41 @@ public class NPCController : MonoBehaviour
     {
         if (_agent != null)
             _agent.updateRotation = false;
+        PlayAnimation(_skeletonFront ?? _skeletonBack, "1.Idle");
+    }
+
+    private void Update()
+    {
+        if (_agent == null || !_agent.isOnNavMesh) return;
+
+        bool moving = _agent.velocity.sqrMagnitude > 0.01f;
+
+        if (moving)
+        {
+            Vector3 vel = _agent.velocity;
+            bool useBack = vel.z > 0.01f || vel.x < -0.01f;
+            SkeletonAnimation target = useBack ? _skeletonBack : _skeletonFront;
+            if (target != null)
+                PlayAnimation(target, "3.Run");
+        }
+        else
+        {
+            PlayAnimation(_skeletonFront ?? _skeletonBack, "1.Idle");
+        }
+    }
+
+    private void PlayAnimation(SkeletonAnimation skeleton, string anim)
+    {
+        if (skeleton == null) return;
+        if (skeleton == _currentSkeleton && _currentAnim == anim) return;
+        if (skeleton.AnimationState == null) return;
+
+        if (_skeletonFront != null) _skeletonFront.gameObject.SetActive(skeleton == _skeletonFront);
+        if (_skeletonBack != null) _skeletonBack.gameObject.SetActive(skeleton == _skeletonBack);
+
+        skeleton.AnimationState.SetAnimation(0, anim, true);
+        _currentSkeleton = skeleton;
+        _currentAnim = anim;
     }
 
     public void Unlock(string skinName)
@@ -64,8 +107,10 @@ public class NPCController : MonoBehaviour
 
     public void SetSpineColor(Color color)
     {
-        if (_skeletonAnimation != null && _skeletonAnimation.Skeleton != null)
-            _skeletonAnimation.Skeleton.SetColor(color);
+        if (_skeletonFront != null && _skeletonFront.Skeleton != null)
+            _skeletonFront.Skeleton.SetColor(color);
+        if (_skeletonBack != null && _skeletonBack.Skeleton != null)
+            _skeletonBack.Skeleton.SetColor(color);
     }
 
     public void MoveTo(Vector3 position, Action onArrive = null)

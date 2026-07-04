@@ -251,10 +251,12 @@ MonoBehaviour:
   _database: {fileID: 11400000, guid: 260e42721daa54497b523451cf476257, type: 2}
   _characterDataList:
   - {fileID: 11400000, guid: 3cdfe49bd0b0d4a498a7e20058d4ba61, type: 2}
-  - {fileID: 11400000, guid: cd0acb7f004d9422aa2bdf41cd6593bf, type: 2}
   - {fileID: 11400000, guid: 5d92ade89a40e4a85b8622dacfbd292e, type: 2}
-  - {fileID: 11400000, guid: 60c00fbac6b124bca9d0b3516072fc9a, type: 2}
+  - {fileID: 11400000, guid: f8a9af6fc60b94820a17016d1a5252a6, type: 2}
+  - {fileID: 11400000, guid: 041f841c632b0467686484e215f19e3b, type: 2}
   - {fileID: 11400000, guid: 692257aa301674f07bd667251d8625a9, type: 2}
+  - {fileID: 11400000, guid: ec4025c24257e4aedafd097e237eafb8, type: 2}
+  - {fileID: 11400000, guid: 7a7bc1ad071c84aa68c820b283471599, type: 2}
 --- !u!1 &8578238834303642324
 GameObject:
   m_ObjectHideFlags: 0
