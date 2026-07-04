@@ -18,6 +18,10 @@ public class DayHUD : MonoBehaviour
 
     private bool _inRoom;
 
+    public RectTransform AdvanceButtonTarget => advanceButton != null
+        ? advanceButton.transform as RectTransform
+        : null;
+
     private void Awake()
     {
         if (advanceButton != null) advanceButton.onClick.AddListener(OnAdvanceClicked);
@@ -39,6 +43,7 @@ public class DayHUD : MonoBehaviour
             vm.OnRoomExited += HandleRoomExited;
         }
 
+        TutorialInputGate.OnStateChanged += Refresh;
         Refresh();
     }
 
@@ -57,6 +62,8 @@ public class DayHUD : MonoBehaviour
             vm.OnRoomEnterRequested -= HandleRoomEntered;
             vm.OnRoomExited -= HandleRoomExited;
         }
+
+        TutorialInputGate.OnStateChanged -= Refresh;
     }
 
     private void HandleDayChanged(int newDay) => Refresh();
@@ -71,11 +78,18 @@ public class DayHUD : MonoBehaviour
         if (dm == null) return;
 
         if (dayLabel != null) dayLabel.text = $"Day {dm.CurrentDay}";
-        if (advanceButton != null) advanceButton.gameObject.SetActive(dm.CanAdvance);
+        if (advanceButton != null)
+        {
+            advanceButton.gameObject.SetActive(dm.CanAdvance);
+            advanceButton.interactable = dm.CanAdvance &&
+                                         TutorialInputGate.Allows(TutorialInputGate.NextDayButtonTargetId);
+        }
     }
 
     private void OnAdvanceClicked()
     {
+        if (!TutorialInputGate.Allows(TutorialInputGate.NextDayButtonTargetId)) return;
+
         // The lock is a plain bool (not nestable): advancing during a build would let
         // the build's Unlock unfreeze the map mid-transition. Mid-hop is blocked too —
         // the pending arrival callback could open a room while the screen is dark.

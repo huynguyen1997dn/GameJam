@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::JournalDatabase
   entries:
   - {fileID: 11400000, guid: 5e256355b504644949036ac42965df48, type: 2}
-  - {fileID: 11400000, guid: 43215adf9070441e9a386631d7761f69, type: 2}
+  - {fileID: 11400000, guid: a4f22253216547c2b59391c2c84f2b72, type: 2}
   - {fileID: 11400000, guid: 170a79cd69d694d16ab5264c3c646175, type: 2}
   - {fileID: 11400000, guid: 3d3cf7b9550444ec7a1baaec60300519, type: 2}
   - {fileID: 11400000, guid: 4ad07652ce5964840bdc5147574b5c9c, type: 2}

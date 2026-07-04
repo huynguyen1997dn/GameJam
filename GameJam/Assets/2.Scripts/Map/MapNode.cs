@@ -173,6 +173,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (MapInputLock.IsLocked) return;
+        if (!TutorialInputGate.Allows(nodeId)) return;
         if (!IsInteractable()) return;
         _isHovered = true;
         transform.localScale = _baseScale * hoverScale;
@@ -192,6 +193,7 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         if (isCosmeticOnly) return;
         if (MapInputLock.IsLocked) return;  // e.g. a build animation is playing
+        if (!TutorialInputGate.Allows(nodeId)) return;
         if (eventData.dragging) return;     // was a camera pan, not a tap
 
         EventDispatcher.Dispatch(EventId.NodeClicked, nodeId);

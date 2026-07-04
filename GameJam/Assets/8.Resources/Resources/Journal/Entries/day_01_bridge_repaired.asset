@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb7e0fc2e8e6b4f1ab3d6f05a737d921, type: 3}
+  m_Name: day_01_bridge_repaired
+  m_EditorClassIdentifier: Assembly-CSharp::JournalEntryData
+  entryId: day_01_bridge_repaired
+  dayNumber: 1
+  title: Bridge Repaired
+  bodyText: 'The bridge was broken at dawn.
+
+    I found usable timber in Darkwood and repaired the crossing before the day faded.
+
+
+    Tomorrow, the villagers may not remember who did it.
+
+    The bridge will.'
+  illustration: {fileID: 0}
+  clueIds: []
+  proofText: The bridge remains, even if no one remembers who repaired it.
+  unlockedFromStart: 0

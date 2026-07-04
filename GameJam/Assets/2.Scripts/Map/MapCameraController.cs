@@ -66,10 +66,10 @@ public class MapCameraController : MonoBehaviour
             return;
         }
 
-        if (MapInputLock.IsLocked)
+        if (MapInputLock.IsLocked || TutorialInputGate.IsActive)
         {
-            // Scripted moment (e.g. a build animation): drop any drag, ignore zoom/pan,
-            // and glide back to the character so the player watches it happen.
+            // Scripted/tutorial moment: drop any drag, ignore zoom/pan, and glide
+            // back to the character so the player watches the guided target.
             _pointerDown = false;
             _isDragging = false;
             _isFreeLook = false;

@@ -14,6 +14,10 @@ public class JournalMapButton : MonoBehaviour
 
     private bool _inRoom;
 
+    public RectTransform ButtonTarget => button != null
+        ? button.transform as RectTransform
+        : null;
+
     private void Awake()
     {
         if (button != null) button.onClick.AddListener(OnClicked);
@@ -31,6 +35,7 @@ public class JournalMapButton : MonoBehaviour
             vm.OnRoomExited += HandleRoomExited;
         }
 
+        TutorialInputGate.OnStateChanged += Refresh;
         Refresh();
     }
 
@@ -45,6 +50,8 @@ public class JournalMapButton : MonoBehaviour
             vm.OnRoomEnterRequested -= HandleRoomEntered;
             vm.OnRoomExited -= HandleRoomExited;
         }
+
+        TutorialInputGate.OnStateChanged -= Refresh;
     }
 
     private void HandleUnreadChanged(bool hasUnread) => Refresh();
@@ -58,10 +65,15 @@ public class JournalMapButton : MonoBehaviour
         var jm = JournalManager.Instance;
         if (unreadIndicator != null)
             unreadIndicator.SetActive(jm != null && jm.HasUnreadContent());
+
+        if (button != null)
+            button.interactable = TutorialInputGate.Allows(TutorialInputGate.JournalButtonTargetId);
     }
 
     private void OnClicked()
     {
+        if (!TutorialInputGate.Allows(TutorialInputGate.JournalButtonTargetId)) return;
+
         // OpenJournal re-checks these, but bailing here keeps the button from even
         // reacting during a build animation or day transition.
         if (MapInputLock.IsLocked) return;

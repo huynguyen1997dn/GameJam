@@ -21,6 +21,7 @@ public class GamePlayView : ViewBase
 
     private void HandleNodeClicked(string nodeId)
     {
+        if (TutorialInputGate.IsActive) return;
         if (nodeId != "Bridge") return;
         if (UIManager.Instance.ActivePopups.Count > 1) return;
 

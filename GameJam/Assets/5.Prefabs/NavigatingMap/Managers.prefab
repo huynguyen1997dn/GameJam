@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3368176623567264053}
   - component: {fileID: 2598189787934983456}
   - component: {fileID: 9159359759026933679}
+  - component: {fileID: 7753120935632752186}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -82,7 +83,7 @@ MonoBehaviour:
   - nodeId: VillagerHouse
     game: 4
   - nodeId: Darkwood
-    game: 4
+    game: 0
   - nodeId: Watchtower
     game: 4
   - nodeId: AbandonWell
@@ -125,3 +126,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08560f70e658146b48ac7165de050a90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDebugCheats
+--- !u!114 &7753120935632752186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6791438253946041323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cf521947fbc4b588c38ef0c4a11d0da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Day1TutorialController
+  autoStartOnDayOne: 1
+  persistCompletionWithPlayerPrefs: 1
+  bridgeNodeId: Bridge
+  woodNodeId: Forest
+  bridgeJournalEntryId: day_01_bridge_repaired
+  bridgeProofText: The bridge remains, even if no one remembers who repaired it.
+  tutorialView: {fileID: 0}
+  darkOverlayOpacity: 0.55
+  journalToastDuration: 2
+  rewardToastDuration: 1.5
