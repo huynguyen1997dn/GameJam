@@ -1552,6 +1552,7 @@ MonoBehaviour:
   scrollZoomStep: 1
   pinchZoomSpeed: 0.02
   dragPanEnabled: 1
+  dayCameraConfig: {fileID: 11400000, guid: a7e9f1c3d2b54a8ea6f7c0d9e8f7a6b5, type: 2}
   focusSmoothTime: 0.4
 --- !u!1 &665688868
 GameObject:

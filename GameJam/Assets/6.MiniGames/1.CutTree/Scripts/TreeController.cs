@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
 public class TreeController : MonoBehaviour, IPooledObject
 {
     [SerializeField] private SpriteRenderer _sprite;
+    [SerializeField] private List<Sprite> _icons;
 
     private CutTreeManager _manager;
     private Vector3 _originalPos;
@@ -13,6 +15,7 @@ public class TreeController : MonoBehaviour, IPooledObject
 
     public void Init(CutTreeManager manager)
     {
+        _sprite.sprite = _icons[Random.Range(0, _icons.Count)];
         _manager = manager;
     }
 
@@ -31,6 +34,8 @@ public class TreeController : MonoBehaviour, IPooledObject
 
         transform.localScale = Vector3.one;
         transform.localRotation = Quaternion.identity;
+        
+        
     }
 
     public void FallDown()
@@ -49,6 +54,8 @@ public class TreeController : MonoBehaviour, IPooledObject
         fallSeq.OnComplete(() =>
         {
             _manager?.OnTreeFell(this);
+            
+            _sprite.sprite = _icons[Random.Range(0, _icons.Count)];
             ObjectPoolManager.Instance.ReturnObject(gameObject);
         });
     }

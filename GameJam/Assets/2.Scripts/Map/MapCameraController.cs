@@ -28,10 +28,14 @@ public class MapCameraController : MonoBehaviour
     [Header("Drag Pan")]
     [SerializeField] private bool dragPanEnabled = true;
 
+    [Header("Day Config")]
+    [SerializeField] private MapDayCameraConfigSO dayCameraConfig;
+
     [Header("Tutorial Focus")]
     [SerializeField] private float focusSmoothTime = 0.4f;
 
     private Camera _cam;
+    private DayCameraConfig _currentConfig;
     private Transform _focusTarget;   // while set, the camera centers here instead of the character
     private Vector3 _followVelocity;
     private bool _pointerDown;        // pointer held, possibly still a tap
@@ -39,6 +43,7 @@ public class MapCameraController : MonoBehaviour
     private bool _isFreeLook;         // player panned away; follow is paused
     private Vector2 _pointerDownScreenPos;
     private Vector3 _dragOriginWorld; // world point pinned under the pointer while panning
+
 
     private void Awake()
     {
@@ -49,13 +54,44 @@ public class MapCameraController : MonoBehaviour
 
     private void Start()
     {
+        if (dayCameraConfig != null)
+        {
+            var dm = DayManager.Instance;
+            if (dm != null)
+            {
+                dm.OnDayChanged += HandleDayChanged;
+                _currentConfig = dayCameraConfig.GetConfigForDay(dm.CurrentDay);
+                ApplyDayConfig(_currentConfig);
+            }
+        }
+
         // Snap onto the character at load so the camera doesn't pan across the map at start.
-        if (followTarget != null)
+        if (_currentConfig != null && _currentConfig.followCharacter && followTarget != null)
         {
             Vector3 pos = transform.position;
             transform.position = new Vector3(followTarget.position.x, followTarget.position.y, pos.z);
         }
         ClampToBounds();
+    }
+
+    private void OnDestroy()
+    {
+        var dm = DayManager.Instance;
+        if (dm != null)
+            dm.OnDayChanged -= HandleDayChanged;
+    }
+
+    private void HandleDayChanged(int newDay)
+    {
+        if (dayCameraConfig == null) return;
+        _currentConfig = dayCameraConfig.GetConfigForDay(newDay);
+        ApplyDayConfig(_currentConfig);
+    }
+
+    private void ApplyDayConfig(DayCameraConfig config)
+    {
+        if (config == null) return;
+        _cam.orthographicSize = config.cameraSize;
     }
 
     // Tutorial override: the camera bypasses the follow rule and glides onto this
@@ -106,7 +142,11 @@ public class MapCameraController : MonoBehaviour
         }
         else
         {
-            HandleZoomInput();
+            if (_currentConfig == null || _currentConfig.allowZoom)
+                HandleZoomInput();
+            else
+                _cam.orthographicSize = _currentConfig.cameraSize;
+
             HandlePanInput();
         }
 
@@ -116,16 +156,19 @@ public class MapCameraController : MonoBehaviour
         if (_isFreeLook && !_pointerDown && mover != null && mover.IsMoving)
             _isFreeLook = false;
 
-        if (!_isFreeLook)
+        if (!_isFreeLook && (_currentConfig == null || _currentConfig.followCharacter))
             FollowTarget();
 
+        ApplyDragBounds();
         ClampToBounds();
     }
 
     private void HandlePanInput()
     {
         // Two fingers belong to pinch zoom — abandon any pan in progress.
-        if (!dragPanEnabled || Input.touchCount >= 2)
+        bool dragAllowed = _currentConfig != null ? _currentConfig.dragEnabled : dragPanEnabled;
+        
+        if (!dragAllowed || Input.touchCount >= 2)
         {
             _pointerDown = false;
             _isDragging = false;
@@ -237,6 +280,20 @@ public class MapCameraController : MonoBehaviour
         // If the view is wider/taller than the map on an axis, lock to the map's center there.
         pos.x = b.size.x <= halfW * 2f ? b.center.x : Mathf.Clamp(pos.x, b.min.x + halfW, b.max.x - halfW);
         pos.y = b.size.y <= halfH * 2f ? b.center.y : Mathf.Clamp(pos.y, b.min.y + halfH, b.max.y - halfH);
+        transform.position = pos;
+    }
+
+    private void ApplyDragBounds()
+    {
+        if (_currentConfig == null || !_currentConfig.dragEnabled) return;
+
+        if (_currentConfig.dragBoundsMin == Vector2.zero &&
+            _currentConfig.dragBoundsMax == Vector2.zero)
+            return;
+
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x, _currentConfig.dragBoundsMin.x, _currentConfig.dragBoundsMax.x);
+        pos.y = Mathf.Clamp(pos.y, _currentConfig.dragBoundsMin.y, _currentConfig.dragBoundsMax.y);
         transform.position = pos;
     }
 }
