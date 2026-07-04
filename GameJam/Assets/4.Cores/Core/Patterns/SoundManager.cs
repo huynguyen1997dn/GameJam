@@ -118,11 +118,11 @@ public class SoundManager : Singleton<SoundManager>
 
     public void PlayBgm(string soundId)
     {
-        if (_isSfxMute)
+        if (_isBgmMute)
         {
             return;
         }
-        
+
         _bgmAudioSource.loop = true;
         _bgmAudioSource.clip = _soundsData.FirstOrDefault(x => x.SoundId == soundId)?.SoundClip;
         _bgmAudioSource.Play();
@@ -155,6 +155,47 @@ public class SoundManager : Singleton<SoundManager>
 
         _bgmFadeTween = _bgmAudioSource.DOFade(_audioBGMVolumeDefault, fadeDuration)
             .SetEase(Ease.InOutCubic);
+    }
+
+    /// <summary>
+    /// Switches the looping BGM to a new clip, fading the current one out and the
+    /// new one in. While BGM is muted the clip still starts at volume 0 so that
+    /// unmuting resumes the correct phase track.
+    /// </summary>
+    public void CrossfadeBgm(AudioClip clip, float fadeDuration = 1f)
+    {
+        if (clip == null || _bgmAudioSource.clip == clip) return;
+
+        _bgmFadeTween?.Kill();
+
+        // No audible track to fade out (clip can be null while isPlaying is true when
+        // Play On Awake is ticked on an empty source) — start the new clip directly.
+        if (_isBgmMute || !_bgmAudioSource.isPlaying || _bgmAudioSource.clip == null)
+        {
+            _bgmAudioSource.loop = true;
+            _bgmAudioSource.clip = clip;
+            _bgmAudioSource.volume = 0f;
+            _bgmAudioSource.Play();
+
+            if (!_isBgmMute)
+            {
+                _bgmFadeTween = _bgmAudioSource.DOFade(_audioBGMVolumeDefault, fadeDuration)
+                    .SetEase(Ease.InOutCubic);
+            }
+            return;
+        }
+
+        float half = fadeDuration * 0.5f;
+        _bgmFadeTween = _bgmAudioSource.DOFade(0f, half)
+            .SetEase(Ease.InOutCubic)
+            .OnComplete(() =>
+            {
+                _bgmAudioSource.loop = true;
+                _bgmAudioSource.clip = clip;
+                _bgmAudioSource.Play();
+                _bgmFadeTween = _bgmAudioSource.DOFade(_audioBGMVolumeDefault, half)
+                    .SetEase(Ease.InOutCubic);
+            });
     }
 
     public void StopBgmWithFadeOut(float fadeDuration = 1f)

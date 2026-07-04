@@ -1248,10 +1248,10 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1750,6 +1750,7 @@ Transform:
   m_Children:
   - {fileID: 1326193316}
   - {fileID: 665688870}
+  - {fileID: 2091409902}
   - {fileID: 2094748942}
   - {fileID: 735883803}
   - {fileID: 69383245}
@@ -3254,6 +3255,63 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2091409901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2091409902}
+  - component: {fileID: 2091409903}
+  m_Layer: 0
+  m_Name: BGMPhaseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2091409902
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091409901}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.2553, y: -3.95776, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 737398978}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2091409903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091409901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f199c6c7bb3be4504a6316d99d629939, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BgmPhaseManager
+  phases:
+  - clip: {fileID: 8300000, guid: 7f2f04b9525f64f6d8c958de4922d27b, type: 3}
+    startDay: 1
+    triggerNodeIds: []
+  - clip: {fileID: 8300000, guid: 74077309d4b9c4b5294f6bba3f503bb6, type: 3}
+    startDay: 8
+    triggerNodeIds:
+    - Darkwood
+  - clip: {fileID: 8300000, guid: 7f2f04b9525f64f6d8c958de4922d27b, type: 3}
+    startDay: 8
+    triggerNodeIds:
+    - Shrine
+  crossfadeDuration: 2
 --- !u!1 &2094748940
 GameObject:
   m_ObjectHideFlags: 0
@@ -3283,7 +3341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b37518dbf8824ff696101f9a4dc52bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
-  _audioBGMVolumeDefault: 0.7
+  _audioBGMVolumeDefault: 1
   _bgmAudioSource: {fileID: 494974590}
   _sfxHolder: {fileID: 1011234645}
   audioSourceCount: 8
