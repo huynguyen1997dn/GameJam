@@ -194,6 +194,8 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         if (MapInputLock.IsLocked) return;  // e.g. a build animation is playing
         if (eventData.dragging) return;     // was a camera pan, not a tap
 
+        EventDispatcher.Dispatch(EventId.NodeClicked, nodeId);
+
         if (!IsInteractable())
         {
             PlayLockedFeedback();
