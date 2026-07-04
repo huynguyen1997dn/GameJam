@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8507397546933936497}
   - component: {fileID: 3368176623567264053}
   - component: {fileID: 2598189787934983456}
+  - component: {fileID: 9159359759026933679}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -112,3 +113,15 @@ MonoBehaviour:
     - Watchtower
   - requiredNodeIds:
     - AbandonWell
+--- !u!114 &9159359759026933679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6791438253946041323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08560f70e658146b48ac7165de050a90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapDebugCheats

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bca43ca8026141198a36d51fd316359, type: 3}
+  m_Name: JournalDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::JournalDatabase
+  entries:
+  - {fileID: 11400000, guid: 5e256355b504644949036ac42965df48, type: 2}
+  - {fileID: 11400000, guid: 43215adf9070441e9a386631d7761f69, type: 2}
+  - {fileID: 11400000, guid: 170a79cd69d694d16ab5264c3c646175, type: 2}
+  - {fileID: 11400000, guid: 3d3cf7b9550444ec7a1baaec60300519, type: 2}
+  - {fileID: 11400000, guid: 4ad07652ce5964840bdc5147574b5c9c, type: 2}
+  clues:
+  - {fileID: 11400000, guid: b2ff3cfcda5494363bb3206a0e3a7aa7, type: 2}
+  - {fileID: 11400000, guid: 05356cd1bfe9140048a0c54182d8f06e, type: 2}
+  - {fileID: 11400000, guid: 2236989095b0e4fecaa50ef47fde70ff, type: 2}
+  - {fileID: 11400000, guid: be7e0cdde911d41ee8dc7b5e7b65d2e8, type: 2}
+  - {fileID: 11400000, guid: cb4a5ce72079c44e49d91d36008fdfc5, type: 2}
+  - {fileID: 11400000, guid: 1d1d2048923c54192bbca7369c46a897, type: 2}
+  - {fileID: 11400000, guid: e35c1ebb928b248abaacdcf70e69abdf, type: 2}
+  - {fileID: 11400000, guid: fa533371de4b44943a8a39bca5d633ea, type: 2}
+  - {fileID: 11400000, guid: 2c60a1dd9b8854e44be3189fe26c1304, type: 2}

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb7e0fc2e8e6b4f1ab3d6f05a737d921, type: 3}
+  m_Name: day_00_prologue
+  m_EditorClassIdentifier: Assembly-CSharp::JournalEntryData
+  entryId: day_00_prologue
+  dayNumber: 0
+  title: The Village That Forgets
+  bodyText: "I arrived at dusk. They greeted me warmly \u2014 then greeted me again
+    an hour later, as if for the first time.\n\nEvery dawn wipes them clean. Names,
+    debts, promises. Only the village itself keeps the score: doors I opened stay
+    open, paths I cleared stay clear.\n\nIf I want answers, I will have to leave
+    marks the morning cannot erase."
+  illustration: {fileID: 0}
+  clueIds:
+  - clue_dawn_reset
+  - clue_paper_remembers
+  proofText: 
+  unlockedFromStart: 1

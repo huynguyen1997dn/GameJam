@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb7e0fc2e8e6b4f1ab3d6f05a737d921, type: 3}
+  m_Name: day_03_bridge_repaired
+  m_EditorClassIdentifier: Assembly-CSharp::JournalEntryData
+  entryId: day_03_bridge_repaired
+  dayNumber: 3
+  title: The Bridge Was Repaired
+  bodyText: 'They do not remember who built the bridge.
+
+    But this morning, people
+    crossed the river for the first time.
+
+
+    The market is louder now.
+
+    Someone
+    brought tools from outside the village.'
+  illustration: {fileID: 0}
+  clueIds:
+  - clue_bridge_connects
+  - clue_old_carpenter
+  - clue_tool_marks
+  proofText: The village has changed.
+  unlockedFromStart: 0

@@ -44,6 +44,7 @@
   <Project Path="StompyRobot.SRDebugger.Editor.csproj" />
   <Project Path="StompyRobot.SRDebugger.csproj" />
   <Project Path="Assembly-CSharp-firstpass.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Unity.Collections.CodeGen.csproj" />
   <Project Path="Unity.2D.Tilemap.Extras.csproj" />
   <Project Path="Unity.2D.Animation.Runtime.csproj" />
@@ -55,7 +56,6 @@
   <Project Path="spine-unity-examples-editor.csproj" />
   <Project Path="Assembly-CSharp-Editor-firstpass.csproj" />
   <Project Path="Unity.CollabProxy.Editor.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="StompyRobot.SRF.Editor.csproj" />
   <Project Path="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
   <Project Path="Unity.VisualScripting.DocCodeExamples.csproj" />
