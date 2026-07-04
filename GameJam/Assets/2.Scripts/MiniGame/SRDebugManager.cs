@@ -5,14 +5,23 @@ using System.ComponentModel; // Bắt buộc phải có để dùng [Category]
 public class SRDebugManager : Singleton<SRDebugManager>
 {
     private MiniGameType _miniGameType;
+    private PhaseId _phaseId;
 
     // 1. Chuyển thành Property để SRDebugger tự động tạo Dropdown chọn Enum
+    [Category("Mini Game Debugger")]
+    public PhaseId PhaseId
+    {
+        get => _phaseId;
+        set => _phaseId = value;
+    }
+    
     [Category("Mini Game Debugger")]
     public MiniGameType MiniGame
     {
         get => _miniGameType;
         set => _miniGameType = value;
     }
+
 
     private void Start()
     {
@@ -42,5 +51,13 @@ public class SRDebugManager : Singleton<SRDebugManager>
         {
             Debug.LogError("[SRDebug] MiniGameManager.Instance đang bị NULL!");
         }
+    }
+    
+    [Category("Dialog Game")]
+    public void PlayDialog()
+    {
+        Debug.Log($"[SRDebug] Đang chạy game: {_miniGameType}");
+        UIManager.Instance.OnShowPopup(PopupId.DialogPopup, _phaseId);
+
     }
 }

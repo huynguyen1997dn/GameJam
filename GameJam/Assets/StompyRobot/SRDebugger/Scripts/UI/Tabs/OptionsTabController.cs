@@ -318,7 +318,7 @@
 
                 if (control == null)
                 {
-                    Debug.LogError("[SRDebugger.OptionsTab] Failed to create option control for {0}".Fmt(option.Name));
+                    // Debug.LogError("[SRDebugger.OptionsTab] Failed to create option control for {0}".Fmt(option.Name));
                     continue;
                 }
 
