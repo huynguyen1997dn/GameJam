@@ -162,6 +162,19 @@ public class NPCBehaviorManager : Singleton<NPCBehaviorManager>
             for (int i = 0; i < count; i++)
                 allNpcs[i].SetNameText(namePool[i]);
 
+            for (int i = 0; i < count; i++)
+            {
+                if (allNpcs[i].NPCType == NPCType.LittleGirl)
+                {
+                    allNpcs[i].SetNameText(NPCController.NPC_LITTLE_GIRL);
+                }
+                if (allNpcs[i].NPCType == NPCType.Elder)
+                {
+                    allNpcs[i].SetNameText(NPCController.NPC_OLD_MAIN);
+                }
+            }
+            
+
             _namesAssigned = true;
         }
         else

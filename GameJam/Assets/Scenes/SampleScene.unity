@@ -152,11 +152,49 @@ MonoBehaviour:
   - day: 2
     actions:
     - npcType: 1
-      npcCount: 2
-      targetNodeId: Initial
+      npcCount: 1
+      targetNodeId: Node_d2_Villager_1
       offsetFromNode: {x: 0, y: 0, z: 0}
       actionType: 0
-      duration: 2
+      duration: 9999999
+    - npcType: 0
+      npcCount: 1
+      targetNodeId: Node_d2_Villager_2
+      offsetFromNode: {x: 0, y: 0, z: 0}
+      actionType: 0
+      duration: 9999999
+    - npcType: 1
+      npcCount: 1
+      targetNodeId: Node_d3_Villager_1
+      offsetFromNode: {x: 0, y: 0, z: 0}
+      actionType: 0
+      duration: 9999999
+    - npcType: 1
+      npcCount: 1
+      targetNodeId: Node_d3_Villager_2
+      offsetFromNode: {x: 0, y: 0, z: 0}
+      actionType: 0
+      duration: 9999999
+  - day: 3
+    actions:
+    - npcType: 1
+      npcCount: 1
+      targetNodeId: Node_d3_Villager_1
+      offsetFromNode: {x: 0, y: 0, z: 0}
+      actionType: 0
+      duration: 9999999
+    - npcType: 1
+      npcCount: 1
+      targetNodeId: Node_d3_Villager_2
+      offsetFromNode: {x: 0, y: 0, z: 0}
+      actionType: 0
+      duration: 9999999
+    - npcType: 2
+      npcCount: 1
+      targetNodeId: VillagerHouse
+      offsetFromNode: {x: 0, y: 0, z: 0}
+      actionType: 0
+      duration: 9999999
   _goBrigrd: {fileID: 129819134}
 --- !u!4 &50271502
 Transform:
@@ -1125,6 +1163,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -473
       objectReference: {fileID: 0}
+    - target: {fileID: 4170263873439001333, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: m_SortingOrder
+      value: -32768
+      objectReference: {fileID: 0}
     - target: {fileID: 4240425236551649063, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
       value: -998
@@ -1185,9 +1227,17 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -1649
       objectReference: {fileID: 0}
+    - target: {fileID: 6580485995100334734, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: spawnEntries.Array.data[2].count
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6774390735722362693, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
       value: 882
+      objectReference: {fileID: 0}
+    - target: {fileID: 6876698394405968706, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: m_SortingOrder
+      value: -32768
       objectReference: {fileID: 0}
     - target: {fileID: 6934583582906107688, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
@@ -1196,6 +1246,10 @@ PrefabInstance:
     - target: {fileID: 7009222469745136907, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_SortingOrder
       value: 847
+      objectReference: {fileID: 0}
+    - target: {fileID: 7562342052924723915, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
+      propertyPath: m_SortingOrder
+      value: -32768
       objectReference: {fileID: 0}
     - target: {fileID: 7881405888677016360, guid: 8edbe0b7888b94d0f84cb8c1592c36da, type: 3}
       propertyPath: m_Name
@@ -2619,7 +2673,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5886970940147010863, guid: 1699dfc2ea15e47ffa23e512b5ba9867, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -35.000122
+      value: -35
       objectReference: {fileID: 0}
     - target: {fileID: 6296698685513494272, guid: 1699dfc2ea15e47ffa23e512b5ba9867, type: 3}
       propertyPath: m_AnchorMax.y
