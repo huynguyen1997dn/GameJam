@@ -131,6 +131,8 @@ public class SortHomeManager : MiniGameBase
             go.name = $"Item_{i}";
             item.Init(this, slot.sprite, targetPos, scatterPos);
             item.FitColliderToSprite();
+
+            item.setCamera(_cam);
             _items.Add(item);
         }
     }

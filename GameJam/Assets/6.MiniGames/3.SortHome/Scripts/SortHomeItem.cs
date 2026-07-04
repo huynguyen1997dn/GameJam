@@ -115,11 +115,12 @@ public class SortHomeItem : MonoBehaviour
 
     private Vector3 GetMouseWorldPos()
     {
+        Debug.Log($"GetMouseWorldPos {_cam != null}");
         Vector3 mousePos = Input.mousePosition;
-        if (Camera.main != null)
+        if (_cam != null)
         {
-            mousePos.z = Mathf.Abs(Camera.main.transform.position.z);
-            return Camera.main.ScreenToWorldPoint(mousePos);
+            mousePos.z = Mathf.Abs(_cam.transform.position.z);
+            return _cam.ScreenToWorldPoint(mousePos);
         }
         return Vector3.zero;
     }
@@ -128,5 +129,12 @@ public class SortHomeItem : MonoBehaviour
     {
         if (!_sprite) _sprite = GetComponent<SpriteRenderer>();
         if (!_collider) _collider = GetComponent<BoxCollider2D>();
+    }
+    
+    private Camera _cam;
+
+    public void setCamera(Camera cam)
+    {
+        _cam = cam;
     }
 }

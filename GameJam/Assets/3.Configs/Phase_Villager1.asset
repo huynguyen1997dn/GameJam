@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogPhaseSO
   phaseId: 9
   entries:
+  - characterId: 1
+    description: "I\u2019m stuck here. Can you help me find a way out?"
   - characterId: 6
-    description: "Go to Elder HOUSE!"
+    description: "Hmm\u2026 I\u2026 don\u2019t really know. You should cross this
+      bridge and go see the village chief."

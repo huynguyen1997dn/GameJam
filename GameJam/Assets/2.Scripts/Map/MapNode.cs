@@ -292,7 +292,10 @@ public class MapNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         if (gsm == null) return false;
 
         foreach (var id in ids)
+        {
             if (!gsm.IsSolved(id)) return false;
+
+        }
         return true;
     }
 

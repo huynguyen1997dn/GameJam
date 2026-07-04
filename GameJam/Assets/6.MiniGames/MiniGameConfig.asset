@@ -17,15 +17,15 @@ MonoBehaviour:
     prefab: {fileID: 2710245823182580489, guid: c21034c4b742d4473a0b48aee9c70c06, type: 3}
     displayName: 
     icon: {fileID: 0}
-  - type: 3
+  - type: 1
     prefab: {fileID: 8102848800278883323, guid: d4fcc1e46ee914de09f909d45a008057, type: 3}
     displayName: TorPainting
     icon: {fileID: 0}
-  - type: 4
+  - type: 2
     prefab: {fileID: 452712925982798817, guid: 2f2d4bb26ac334e5ab3732595578fb12, type: 3}
     displayName: SortHome
     icon: {fileID: 0}
-  - type: 5
+  - type: 3
     prefab: {fileID: 5532638071208345307, guid: f59e2eb2020104bcd957ce4e44dcf236, type: 3}
     displayName: TheDarkForest
     icon: {fileID: 0}

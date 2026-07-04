@@ -37,9 +37,13 @@ public class MiniGameManager : Singleton<MiniGameManager>
 
     public void StartGameWithView(MiniGameType type, Transform container = null)
     {
+        Debug.LogError($"[MiniGameManager] StartGameWithView {type}");
         StartGame(type, container);
+        
         if (_viewMap.TryGetValue(type, out var viewId))
         {
+            Debug.LogError($"[MiniGameManager] Show {type}");
+
             UIManager.Instance.OnShowView(viewId);
         }
     }

@@ -89,8 +89,6 @@ public class NPCBehaviorManager : Singleton<NPCBehaviorManager>
 
     private void HandleDayChanged(int newDay)
     {
-        Debug.LogError("HandleDayChanged" + newDay);
-
         StopAllBehaviors();
         ApplyBehaviorForDay(newDay);
     }
@@ -175,7 +173,7 @@ public class NPCBehaviorManager : Singleton<NPCBehaviorManager>
             }
         }
 
-        Color lysaColor = day > 4 ? Color.white : Color.gray;
+        Color lysaColor = day >= 4 ? Color.white : Color.gray;
         foreach (var npc in allNpcs)
         {
 

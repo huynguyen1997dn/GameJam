@@ -79,13 +79,13 @@ MonoBehaviour:
   - nodeId: Forest
     game: 0
   - nodeId: ElderHouse
-    game: 3
+    game: 1
   - nodeId: VillagerHouse
-    game: 4
+    game: 2
   - nodeId: Darkwood
     game: 0
   - nodeId: Watchtower
-    game: 4
+    game: 3
   - nodeId: AbandonWell
     game: 4
   miniGameContainer: {fileID: 0}
@@ -145,6 +145,6 @@ MonoBehaviour:
   bridgeJournalEntryId: day_01_bridge_repaired
   bridgeProofText: The bridge remains, even if no one remembers who repaired it.
   tutorialView: {fileID: 0}
-  darkOverlayOpacity: 0.55
+  darkOverlayOpacity: 0.8
   journalToastDuration: 2
   rewardToastDuration: 1.5
