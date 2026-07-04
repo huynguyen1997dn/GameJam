@@ -14,9 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogPhaseSO
   phaseId: 1
   entries:
-  - characterId: 1
-    description: Hello! Welcome to the forest.
-  - characterId: 2
-    description: Be careful, there are monsters around!
-  - characterId: 1
-    description: I'll protect you!
+  - characterId: 3
+    description: "The bridge is broken.\nTap it to take a closer look."

@@ -23,6 +23,8 @@ public class ViewManager : Singleton<ViewManager>
         // shows its own content in response to the event above.
     }
 
+    public bool IsMapVisible() => overviewMapRoot != null && overviewMapRoot.activeSelf;
+
     public void ExitRoom()
     {
         if (overviewMapRoot != null) overviewMapRoot.SetActive(true);

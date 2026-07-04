@@ -3,6 +3,8 @@ using UnityEngine;
 
 public partial class EventId
 {
+    public const string PreCompleteGame = "PreCompleteGame";
+
     public const string CompleteGame = "CompleteGame";
     public const string FailGame = "FailGame";
     public const string MiniGameProgressUpdate = "MiniGameProgressUpdate";
@@ -23,7 +25,7 @@ public abstract class MiniGameBase : MonoBehaviour
     protected void CompleteGame()
     {
         OnGameComplete?.Invoke();
-        EventDispatcher.Dispatch(EventId.CompleteGame);
+        EventDispatcher.Dispatch(EventId.PreCompleteGame);
     }
 
     protected void FailGame()

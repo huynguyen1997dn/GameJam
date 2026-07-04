@@ -5,4 +5,6 @@ public enum PhaseId
     Forest_01,
     Forest_02,
     Village_01,
+    BridgeInspect,
+    Village_02,
 }

@@ -17,9 +17,9 @@ public class MiniGameGameView_TheDarkForest : MiniGameGameView
         if (_progressSlider != null) _progressSlider.gameObject.SetActive(false);
     }
 
-    protected override void OnGameComplete()
+    protected override void OnPreGameComplete()
     {
-        base.OnGameComplete();
+        base.OnPreGameComplete();
         if (_goalText != null)
             _goalText.text = "Done!";
     }

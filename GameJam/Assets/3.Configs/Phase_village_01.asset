@@ -14,9 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogPhaseSO
   phaseId: 4
   entries:
-  - characterId: 1
-    description: Hello! Welcome to the forest.
-  - characterId: 2
-    description: Be careful, there are monsters around!
-  - characterId: 1
-    description: I'll protect you!
+  - characterId: 3
+    description: "A trace was recorded.\nOpen the Journal before the day ends."

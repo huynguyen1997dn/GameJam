@@ -60,6 +60,10 @@ public class JournalMapButton : MonoBehaviour
 
     private void Refresh()
     {
+        var vm = ViewManager.Instance;
+        if (vm != null && vm.IsMapVisible())
+            _inRoom = false;
+
         if (root != null) root.SetActive(!_inRoom);
 
         var jm = JournalManager.Instance;

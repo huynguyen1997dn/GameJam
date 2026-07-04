@@ -27,6 +27,8 @@ public class DialogPopup : PopupBase
     [Header("Character Data")]
     [SerializeField] private List<CharacterDataSO> _characterDataList = new();
 
+    public System.Action OnClosed { private get; set; }
+
     private PhaseId _currentPhaseId;
     private DialogPhaseSO _currentPhase;
     private int _currentIndex;
@@ -124,7 +126,6 @@ public class DialogPopup : PopupBase
             canvasGroup.DOFade(1f, _entryAnimationDuration).SetEase(_entryEase);
         }
 
-        Debug.LogError(entry.description);
         item.Setup(
             charData != null ? charData.icon : null,
             charData != null ? charData.displayName : entry.characterId.ToString(),
@@ -206,5 +207,8 @@ public class DialogPopup : PopupBase
     {
         _isAnimating = false;
         base.Hide();
+        var callback = OnClosed;
+        OnClosed = null;
+        callback?.Invoke();
     }
 }

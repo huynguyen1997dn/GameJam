@@ -249,23 +249,25 @@ public class Day1TutorialController : MonoBehaviour
 
     private void ShowBridgeIntro()
     {
-        TutorialInputGate.SetAllowedTarget(bridgeNodeId);
-        tutorialView.ShowObjective("Inspect the bridge.");
-        ShowMapHighlight(bridgeNodeId);
-        tutorialView.ShowGuidedDialogue("Narrator",
-            "The bridge is broken.\nTap it to take a closer look.");
+        TutorialInputGate.BlockAll();
+        tutorialView.HideAll();
+        ShowDialogForPhase(PhaseId.Intro, () =>
+        {
+            TutorialInputGate.SetAllowedTarget(bridgeNodeId);
+            tutorialView.ShowObjective("Inspect the bridge.");
+            ShowMapHighlight(bridgeNodeId);
+        });
     }
 
     private void ShowBridgeInspect()
     {
         TutorialInputGate.BlockAll();
-        tutorialView.HideHighlight();
-        tutorialView.ShowObjective("Find repair material.");
-        tutorialView.PlayBlockingDialogue(new[]
+        tutorialView.HideAll();
+        ShowDialogForPhase(PhaseId.BridgeInspect, () =>
         {
-            new TutorialDialogueLine("Protagonist", "No one can cross like this."),
-            new TutorialDialogueLine("Protagonist", "The old wood has rotted away."),
-        }, () => AdvanceToStep(TutorialStep.TUT_03_GO_TO_FOREST));
+            tutorialView.ShowObjective("Find repair material.");
+            AdvanceToStep(TutorialStep.TUT_03_GO_TO_FOREST);
+        });
     }
 
     private void ShowGoToForest()
@@ -276,11 +278,14 @@ public class Day1TutorialController : MonoBehaviour
             return;
         }
 
-        TutorialInputGate.SetAllowedTarget(woodNodeId);
-        tutorialView.ShowObjective("Find wood.");
-        ShowMapHighlight(woodNodeId);
-        tutorialView.ShowGuidedDialogue("Protagonist",
-            "The nearby forest may still have usable timber.");
+        TutorialInputGate.BlockAll();
+        tutorialView.HideAll();
+        ShowDialogForPhase(PhaseId.Forest_01, () =>
+        {
+            TutorialInputGate.SetAllowedTarget(woodNodeId);
+            tutorialView.ShowObjective("Find wood.");
+            ShowMapHighlight(woodNodeId);
+        });
     }
 
     private void ShowMinigameStep()
@@ -299,11 +304,14 @@ public class Day1TutorialController : MonoBehaviour
             return;
         }
 
-        TutorialInputGate.SetAllowedTarget(bridgeNodeId);
-        tutorialView.ShowObjective("Repair the bridge.");
-        ShowMapHighlight(bridgeNodeId);
-        tutorialView.ShowGuidedDialogue("Protagonist",
-            "This should be enough.\nBack to the bridge.");
+        TutorialInputGate.BlockAll();
+        tutorialView.HideAll();
+        ShowDialogForPhase(PhaseId.Forest_02, () =>
+        {
+            TutorialInputGate.SetAllowedTarget(bridgeNodeId);
+            tutorialView.ShowObjective("Repair the bridge.");
+            ShowMapHighlight(bridgeNodeId);
+        });
     }
 
     private IEnumerator JournalUpdatedRoutine()
@@ -323,21 +331,24 @@ public class Day1TutorialController : MonoBehaviour
 
     private void ShowOpenJournal()
     {
-        TutorialInputGate.SetAllowedTarget(TutorialInputGate.JournalButtonTargetId);
-        tutorialView.ShowObjective("Read the trace.");
-        tutorialView.ShowGuidedDialogue("Narrator",
-            "A trace was recorded.\nOpen the Journal before the day ends.");
-
-        var journalButton = FindObjectOfType<JournalMapButton>();
-        if (journalButton != null && journalButton.ButtonTarget != null)
+        TutorialInputGate.BlockAll();
+        tutorialView.HideAll();
+        ShowDialogForPhase(PhaseId.Village_01, () =>
         {
-            tutorialView.ShowHighlight(journalButton.ButtonTarget);
-            return;
-        }
+            TutorialInputGate.SetAllowedTarget(TutorialInputGate.JournalButtonTargetId);
+            tutorialView.ShowObjective("Read the trace.");
 
-        Debug.LogError("[Day1Tutorial] Journal button target not found.");
-        tutorialView.HideHighlight();
-        StartCoroutine(OpenJournalFallbackRoutine());
+            var journalButton = FindObjectOfType<JournalMapButton>();
+            if (journalButton != null && journalButton.ButtonTarget != null)
+            {
+                tutorialView.ShowHighlight(journalButton.ButtonTarget);
+                return;
+            }
+
+            Debug.LogError("[Day1Tutorial] Journal button target not found.");
+            tutorialView.HideHighlight();
+            StartCoroutine(OpenJournalFallbackRoutine());
+        });
     }
 
     private void ShowJournalOpen()
@@ -350,20 +361,23 @@ public class Day1TutorialController : MonoBehaviour
 
     private void ShowNextDay()
     {
-        TutorialInputGate.SetAllowedTarget(TutorialInputGate.NextDayButtonTargetId);
-        tutorialView.ShowObjective("Start a new day.");
-        tutorialView.ShowGuidedDialogue("Narrator",
-            "The day is fading.\nTomorrow will tell what remains.");
-
-        var dayHud = FindObjectOfType<DayHUD>();
-        if (dayHud != null && dayHud.AdvanceButtonTarget != null)
+        TutorialInputGate.BlockAll();
+        tutorialView.HideAll();
+        ShowDialogForPhase(PhaseId.Village_02, () =>
         {
-            tutorialView.ShowHighlight(dayHud.AdvanceButtonTarget);
-            return;
-        }
+            TutorialInputGate.SetAllowedTarget(TutorialInputGate.NextDayButtonTargetId);
+            tutorialView.ShowObjective("Start a new day.");
 
-        Debug.LogError("[Day1Tutorial] Next Day button target not found.");
-        tutorialView.HideHighlight();
+            var dayHud = FindObjectOfType<DayHUD>();
+            if (dayHud != null && dayHud.AdvanceButtonTarget != null)
+            {
+                tutorialView.ShowHighlight(dayHud.AdvanceButtonTarget);
+                return;
+            }
+
+            Debug.LogError("[Day1Tutorial] Next Day button target not found.");
+            tutorialView.HideHighlight();
+        });
     }
 
     private void ShowDay2Reveal()
@@ -654,6 +668,28 @@ public class Day1TutorialController : MonoBehaviour
 
         tutorialView = viewObject.GetComponent<Day1TutorialUIView>();
         tutorialView.SetDarkOverlayOpacity(darkOverlayOpacity);
+    }
+
+    private void ShowDialogForPhase(PhaseId phaseId, System.Action onClosed)
+    {
+        StartCoroutine(ShowDialogForPhaseRoutine(phaseId, onClosed));
+    }
+
+    private System.Collections.IEnumerator ShowDialogForPhaseRoutine(PhaseId phaseId, System.Action onClosed)
+    {
+        UIManager.Instance.OnShowPopup(PopupId.DialogPopup, phaseId);
+        yield return null;
+
+        var popup = UIManager.Instance.GetCurrentPopup() as DialogPopup;
+        if (popup != null)
+        {
+            popup.OnClosed = onClosed;
+        }
+        else
+        {
+            Debug.LogError("[Day1Tutorial] DialogPopup not found");
+            onClosed?.Invoke();
+        }
     }
 
     private void SubscribeManagerEvents()

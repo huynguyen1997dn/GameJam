@@ -57,8 +57,8 @@ public class MiniGameRoomBridge : MonoBehaviour
         }
 
         _activeNodeId = nodeId;
-        MiniGameManager.Instance.StartGame(game, miniGameContainer);
-        // MiniGameManager.Instance.StartGameWithView(game, miniGameContainer);
+        // MiniGameManager.Instance.StartGame(game, miniGameContainer);
+        MiniGameManager.Instance.StartGameWithView(game, miniGameContainer);
     }
 
     private bool TryGetGameFor(string nodeId, out MiniGameType game)
@@ -99,9 +99,10 @@ public class MiniGameRoomBridge : MonoBehaviour
     private void CloseRoom()
     {
         _activeNodeId = null;
+        var vm = ViewManager.Instance;
+        if (vm != null) vm.ExitRoom();
         var mgm = MiniGameManager.Instance;
-        if (mgm != null) mgm.EndCurrentGame(); // nothing else destroys the finished instance
-        ViewManager.Instance.ExitRoom();
+        if (mgm != null) mgm.EndCurrentGame();
     }
 
     // Covers exits the bridge didn't initiate (the map's back button): abandon the
