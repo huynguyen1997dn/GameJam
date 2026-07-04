@@ -56,6 +56,7 @@ public class Day1TutorialController : MonoBehaviour
     private bool _subscribedDay;
     private bool _subscribedJournal;
     private string _resolvedJournalEntryId;
+    private MapCameraController _mapCamera;
 
     private void OnEnable()
     {
@@ -73,6 +74,7 @@ public class Day1TutorialController : MonoBehaviour
         EventDispatcher.Unsubscribe(EventId.NextDay, HandleNextDayRequested);
 
         UnsubscribeManagerEvents();
+        ReleaseCameraFocus();
 
         if (IsRunning)
         {
@@ -137,6 +139,7 @@ public class Day1TutorialController : MonoBehaviour
         IsRunning = false;
         _currentStep = TutorialStep.TUT_12_END;
         TutorialInputGate.Clear();
+        ReleaseCameraFocus();
 
         if (tutorialView != null) tutorialView.HideAll();
 
@@ -201,6 +204,10 @@ public class Day1TutorialController : MonoBehaviour
 
         _currentStep = step;
         Debug.Log($"[Day1Tutorial] Step: {_currentStep}");
+
+        // Every step change drops the previous camera focus; steps that highlight a
+        // map node re-focus inside ShowMapHighlight. Follow resumes automatically.
+        ReleaseCameraFocus();
 
         switch (step)
         {
@@ -577,6 +584,21 @@ public class Day1TutorialController : MonoBehaviour
         }
 
         tutorialView.ShowHighlight(node.transform);
+        FocusCameraOn(node.transform);
+    }
+
+    // Bypasses the map camera's follow rule so the view glides onto the highlighted
+    // node instead of staying centered on the character.
+    private void FocusCameraOn(Transform target)
+    {
+        if (_mapCamera == null) _mapCamera = FindObjectOfType<MapCameraController>();
+        if (_mapCamera != null) _mapCamera.SetFocusTarget(target);
+        else Debug.LogWarning("[Day1Tutorial] MapCameraController not found — camera focus skipped.");
+    }
+
+    private void ReleaseCameraFocus()
+    {
+        if (_mapCamera != null) _mapCamera.ClearFocusTarget();
     }
 
     private MapNode FindMapNode(string nodeId)

@@ -25,6 +25,12 @@
 - The Journal entry unlocked by the tutorial is `day_01_bridge_repaired`.
 - Completion is saved minimally with `PlayerPrefs` key `DAY1_TUTORIAL_COMPLETED`.
 
+## Camera Focus
+
+- While a map node is highlighted, the controller calls `MapCameraController.SetFocusTarget`, which bypasses the character-follow rule and glides the camera onto that node.
+- Focus is released on every step change (and on tutorial end/skip); the camera then resumes following the character.
+- Glide speed is `MapCameraController > Focus Smooth Time` (default `0.4`).
+
 ## Visual Tuning
 
 - Dark overlay opacity is `Day1TutorialController > Dark Overlay Opacity`.

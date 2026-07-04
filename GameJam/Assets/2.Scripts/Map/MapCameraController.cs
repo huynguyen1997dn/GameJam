@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 /// centered, zooms via mouse scroll or two-finger pinch (legacy Input Manager), and
 /// clamps the view so it never shows outside the map bounds. Dragging (mouse or one
 /// finger) pans to nearby zones; follow resumes when the character next moves.
+/// A tutorial can override everything with SetFocusTarget to glide onto a node.
 /// Freezes while the map is hidden (room view). Camera must be orthographic.
 /// </summary>
 [RequireComponent(typeof(Camera))]
@@ -27,7 +28,11 @@ public class MapCameraController : MonoBehaviour
     [Header("Drag Pan")]
     [SerializeField] private bool dragPanEnabled = true;
 
+    [Header("Tutorial Focus")]
+    [SerializeField] private float focusSmoothTime = 0.4f;
+
     private Camera _cam;
+    private Transform _focusTarget;   // while set, the camera centers here instead of the character
     private Vector3 _followVelocity;
     private bool _pointerDown;        // pointer held, possibly still a tap
     private bool _isDragging;         // passed the drag threshold, actively panning
@@ -53,8 +58,33 @@ public class MapCameraController : MonoBehaviour
         ClampToBounds();
     }
 
+    // Tutorial override: the camera bypasses the follow rule and glides onto this
+    // target (a highlighted node) until ClearFocusTarget. Pan/zoom stay disabled by
+    // the caller's TutorialInputGate, so the player just watches the move.
+    public void SetFocusTarget(Transform target)
+    {
+        _focusTarget = target;
+    }
+
+    public void ClearFocusTarget()
+    {
+        _focusTarget = null;
+    }
+
     private void LateUpdate()
     {
+        // Focus beats follow. The activeInHierarchy check drops the override while the
+        // map is hidden (room view deactivates the nodes along with everything else).
+        if (_focusTarget != null && _focusTarget.gameObject.activeInHierarchy)
+        {
+            _pointerDown = false;
+            _isDragging = false;
+            _isFreeLook = false;
+            GlideTo(_focusTarget.position, focusSmoothTime);
+            ClampToBounds();
+            return;
+        }
+
         // While in room view the map (and character) is inactive — freeze the map camera
         // so the room dev's view is unaffected by scroll/pinch. Dropping free look here
         // means exiting a room always comes back centered on the character.
@@ -183,9 +213,16 @@ public class MapCameraController : MonoBehaviour
 
     private void FollowTarget()
     {
+        GlideTo(followTarget.position, followSmoothTime);
+    }
+
+    // Shares _followVelocity between follow and focus so switching modes mid-glide
+    // keeps the current momentum instead of jerking.
+    private void GlideTo(Vector3 worldPos, float smoothTime)
+    {
         Vector3 pos = transform.position;
-        Vector3 target = new Vector3(followTarget.position.x, followTarget.position.y, pos.z);
-        transform.position = Vector3.SmoothDamp(pos, target, ref _followVelocity, followSmoothTime);
+        Vector3 target = new Vector3(worldPos.x, worldPos.y, pos.z);
+        transform.position = Vector3.SmoothDamp(pos, target, ref _followVelocity, smoothTime);
     }
 
     private void ClampToBounds()
