@@ -10,6 +10,7 @@ public class TheDarkForestManager : MiniGameBase
     private readonly List<TheDarkForestTree> _allTrees = new();
     private int _currentRow;
     private int _failCount;
+    private int _totalRows;
     private bool _isGameOver;
     private Transform _rowsParent;
     private SpriteRenderer _darkOverlay;
@@ -93,41 +94,43 @@ public class TheDarkForestManager : MiniGameBase
 
     private void SpawnAllRows()
     {
+        for (int r = 0; r < _totalRows; r++)
+            SpawnRowAt(r);
+    }
+
+    private void SpawnRowAt(int rowIndex)
+    {
         float totalWidth = (_config.treesPerRow - 1) * _config.spacingX;
+        int correctIndex = Random.Range(0, _config.treesPerRow);
 
-        for (int r = 0; r < _config.rows; r++)
+        for (int t = 0; t < _config.treesPerRow; t++)
         {
-            int correctIndex = Random.Range(0, _config.treesPerRow);
+            bool isCorrect = (t == correctIndex);
+            Sprite sprite = isCorrect ? _config.correctTreeSprite : _config.wrongTreeSprite;
 
-            for (int t = 0; t < _config.treesPerRow; t++)
-            {
-                bool isCorrect = (t == correctIndex);
-                Sprite sprite = isCorrect ? _config.correctTreeSprite : _config.wrongTreeSprite;
+            GameObject go = new GameObject($"Tree_R{rowIndex}_C{t}");
+            go.transform.SetParent(_rowsParent, false);
 
-                GameObject go = new GameObject($"Tree_R{r}_C{t}");
-                go.transform.SetParent(_rowsParent, false);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.sortingOrder = Mathf.RoundToInt(-rowIndex);
 
-                var sr = go.AddComponent<SpriteRenderer>();
-                sr.sprite = sprite;
-                sr.sortingOrder = Mathf.RoundToInt(-r);
+            var col = go.AddComponent<BoxCollider2D>();
 
-                var col = go.AddComponent<BoxCollider2D>();
+            var tree = go.AddComponent<TheDarkForestTree>();
 
-                var tree = go.AddComponent<TheDarkForestTree>();
+            float xOffset = Random.Range(-_config.randomOffsetX, _config.randomOffsetX);
+            float yOffset = Random.Range(-_config.randomOffsetY, _config.randomOffsetY);
 
-                float xOffset = Random.Range(-_config.randomOffsetX, _config.randomOffsetX);
-                float yOffset = Random.Range(-_config.randomOffsetY, _config.randomOffsetY);
+            float x = -totalWidth / 2f + t * _config.spacingX + xOffset;
+            float y = rowIndex * _config.spacingY + yOffset;
 
-                float x = -totalWidth / 2f + t * _config.spacingX + xOffset;
-                float y = r * _config.spacingY + yOffset;
+            go.transform.localPosition = new Vector3(x, y, 0);
 
-                go.transform.localPosition = new Vector3(x, y, 0);
+            tree.Init(this, isCorrect, sprite, rowIndex);
+            tree.FitColliderToSprite();
 
-                tree.Init(this, isCorrect, sprite, r);
-                tree.FitColliderToSprite();
-
-                _allTrees.Add(tree);
-            }
+            _allTrees.Add(tree);
         }
     }
 
@@ -179,7 +182,7 @@ public class TheDarkForestManager : MiniGameBase
         EventDispatcher.Dispatch(EventId.MiniGameProgressUpdate,
             new MiniGameProgressData { gameType = MiniGameType.TheDarkForest, current = _currentRow, target = _config.rows });
 
-        if (_currentRow >= _config.rows)
+        if (_currentRow >= _totalRows)
         {
             ShowTower();
             return;
@@ -233,15 +236,12 @@ public class TheDarkForestManager : MiniGameBase
     {
         if (_isGameOver) return;
         _failCount++;
+        _totalRows++;
+
+        SpawnRowAt(_totalRows - 1);
 
         float alpha = (float)_failCount / _config.maxFails;
         _darkOverlay.DOColor(new Color(0, 0, 0, alpha), 0.3f);
-
-        if (_failCount >= _config.maxFails)
-        {
-            _isGameOver = true;
-            FailGame();
-        }
     }
 
     private void OnDestroy()

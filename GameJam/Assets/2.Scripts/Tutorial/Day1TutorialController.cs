@@ -194,6 +194,7 @@ public class Day1TutorialController : MonoBehaviour
 
     public bool IsTutorialCompleted()
     {
+        return false;
         if (_completedThisSession) return true;
         return persistCompletionWithPlayerPrefs && PlayerPrefs.GetInt(CompletionPrefsKey, 0) == 1;
     }

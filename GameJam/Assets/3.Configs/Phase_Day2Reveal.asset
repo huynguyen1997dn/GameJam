@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogPhaseSO
   phaseId: 8
   entries:
-  - characterId: 6
-    description: "Are you new here?"
-  - characterId: 6
-    description: "I do not remember seeing you before."
-  - characterId: 7
-    description: "They forgot."
-  - characterId: 7
-    description: "But the bridge remained."
+  - characterId: 1
+    description: Are you new here?
+  - characterId: 2
+    description: I do not remember seeing you before.
+  - characterId: 1
+    description: They forgot.
+  - characterId: 2
+    description: But the bridge remained.

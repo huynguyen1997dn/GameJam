@@ -113,6 +113,21 @@ public class NPCController : MonoBehaviour
             _skeletonBack.Skeleton.SetColor(color);
     }
 
+    public void TeleportTo(Vector3 position, Action onArrive = null)
+    {
+        StopAllRoutines();
+        if (_agent != null && _agent.isOnNavMesh)
+        {
+            _agent.Warp(position);
+            _agent.ResetPath();
+        }
+        else
+        {
+            transform.position = position;
+        }
+        onArrive?.Invoke();
+    }
+
     public void MoveTo(Vector3 position, Action onArrive = null)
     {
         StopAllRoutines();

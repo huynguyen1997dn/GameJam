@@ -83,8 +83,6 @@ MonoBehaviour:
   - nodeId: VillagerHouse
     game: 2
   - nodeId: Darkwood
-    game: 0
-  - nodeId: Watchtower
     game: 3
   - nodeId: Shrine
     game: 4

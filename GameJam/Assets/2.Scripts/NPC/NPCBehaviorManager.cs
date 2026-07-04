@@ -205,7 +205,7 @@ public class NPCBehaviorManager : Singleton<NPCBehaviorManager>
         float stayDuration = action.duration;
         NPCController captured = npc;
 
-        npc.MoveTo(targetPos, () =>
+        npc.TeleportTo(targetPos, () =>
         {
             if (stayDuration > 0)
             {

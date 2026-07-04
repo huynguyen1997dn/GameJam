@@ -33,7 +33,7 @@ public class TheDarkForestTree : MonoBehaviour
     {
         if (_sprite != null && _sprite.sprite != null && _collider != null)
         {
-            _collider.size = _sprite.sprite.bounds.size;
+            _collider.size = new  Vector3(2,12,0);
         }
     }
 
