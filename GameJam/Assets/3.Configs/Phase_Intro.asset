@@ -14,5 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogPhaseSO
   phaseId: 1
   entries:
-  - characterId: 3
-    description: "The bridge is broken.\nTap it to take a closer look."
+  - characterId: 1
+    description: Where am i ????
+  - characterId: 1
+    description: 'The bridge is broken.
+
+      Tap it to take a closer look.'

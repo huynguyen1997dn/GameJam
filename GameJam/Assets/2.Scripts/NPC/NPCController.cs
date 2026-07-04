@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Spine.Unity;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,23 +9,30 @@ public class NPCController : MonoBehaviour
 {
     [SerializeField] private NPCType npcType;
     [SerializeField] private string npcId;
-    // [SerializeField] private SkeletonAnimation skeletonAnimation;
+    [SerializeField] private SkeletonAnimation _skeletonAnimation;
+    [SerializeField] private TextMeshPro _nameText;
 
     [SerializeField] private NavMeshAgent _agent;
     private bool _isUnlocked;
     private Coroutine _moveRoutine;
     private Coroutine _wanderRoutine;
+    private string _assignedName;
+
+    public static readonly string[] NPC_NAMES = { "aila", "borin", "cora", "edda", "finn", "lysa", "milo", "nora" };
 
     public NPCType NPCType => npcType;
     public string NPCId => npcId;
     public bool IsUnlocked => _isUnlocked;
     public NavMeshAgent Agent => _agent;
+    public string AssignedName => _assignedName;
 
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
-        // if (skeletonAnimation == null)
-        //     skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
+        if (_skeletonAnimation == null)
+            _skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
+        if (_nameText == null)
+            _nameText = GetComponentInChildren<TextMeshPro>();
     }
 
     private void Start()
@@ -37,12 +45,25 @@ public class NPCController : MonoBehaviour
     {
         if (_isUnlocked) return;
         _isUnlocked = true;
-        // if (skeletonAnimation != null)
-        // {
-        //     // skinName = "animation";
-        //     // skeletonAnimation.Skeleton.SetSkin(skinName);
-        //     // skeletonAnimation.Skeleton.SetSlotsToSetupPose();
-        // }
+    }
+
+    public void SetNameText(string name)
+    {
+        _assignedName = name;
+        if (_nameText != null)
+            _nameText.text = name;
+    }
+
+    public void SetNameColor(Color color)
+    {
+        if (_nameText != null)
+            _nameText.color = color;
+    }
+
+    public void SetSpineColor(Color color)
+    {
+        if (_skeletonAnimation != null && _skeletonAnimation.Skeleton != null)
+            _skeletonAnimation.Skeleton.SetColor(color);
     }
 
     public void MoveTo(Vector3 position, Action onArrive = null)

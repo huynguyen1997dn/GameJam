@@ -40,6 +40,43 @@ public class DialogPopup : PopupBase
         base.Awake();
         _entryPrefab.gameObject.SetActive(false);
     }
+    
+
+    protected override void OnHide()
+    {
+        DOTween.Kill(canvasGroup);
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.DOFade(0, _timeDuration)
+            .SetEase(Ease.InOutCubic).OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+            });
+
+        DOTween.Kill(_content);
+        _content.localScale = Vector3.one;
+        // _content.DOScale(Vector3.zero, _timeDuration);
+    }
+
+    protected override void OnShow()
+    {
+        DOTween.Kill(canvasGroup);
+        canvasGroup.alpha = 0;
+        canvasGroup.DOFade(1, _timeDuration)
+            .SetEase(Ease.InOutCubic).OnComplete(() =>
+            {
+                canvasGroup.interactable = true;
+                canvasGroup.blocksRaycasts = true;
+                EndOnShow();
+            });
+
+
+        DOTween.Kill(_content);
+        _content.localScale = Vector3.one;
+        // _content.DOScale(Vector3.one, _timeDuration);
+        
+    }
+
 
     public override void Show(params object[] args)
     {

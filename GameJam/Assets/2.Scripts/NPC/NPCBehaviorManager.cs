@@ -35,6 +35,7 @@ public class NPCBehaviorManager : Singleton<NPCBehaviorManager>
     private Dictionary<string, Vector3> _nodePositions;
     private readonly Dictionary<NPCController, Coroutine> _activeBehaviors = new();
     private bool _hasInitialized;
+    private bool _namesAssigned;
     [Header("NPC Behaviors")]
     [SerializeField] private GameObject _goBrigrd;
 
@@ -96,8 +97,8 @@ public class NPCBehaviorManager : Singleton<NPCBehaviorManager>
 
     private void ApplyBehaviorForDay(int day)
     {
-        Debug.LogError("ApplyBehaviorForDay" );
-        
+        ApplyNPCNames(day);
+
         _goBrigrd.SetActive(day<2);
 
         var config = dayBehaviors.FirstOrDefault(b => b.day == day);
@@ -108,7 +109,6 @@ public class NPCBehaviorManager : Singleton<NPCBehaviorManager>
                 npc.StartWandering();
             return;
         }
-        Debug.LogError("ApplyBehaviorForDay1" );
 
 
         List<NPCController> assigned = new List<NPCController>();
@@ -134,6 +134,53 @@ public class NPCBehaviorManager : Singleton<NPCBehaviorManager>
         {
             if (!assigned.Contains(npc))
                 npc.StartWandering();
+        }
+    }
+
+    private void ApplyNPCNames(int day)
+    {
+        var allNpcs = NPCManager.Instance.AllNPCs;
+
+        if (day <= 2)
+        {
+            foreach (var npc in allNpcs)
+            {
+                npc.SetSpineColor(Color.gray);
+                npc.SetNameText("???");
+            }
+            return;
+        }
+
+        if (!_namesAssigned)
+        {
+            var namePool = new List<string>(NPCController.NPC_NAMES);
+            for (int i = 0; i < namePool.Count; i++)
+            {
+                int swap = UnityEngine.Random.Range(i, namePool.Count);
+                (namePool[i], namePool[swap]) = (namePool[swap], namePool[i]);
+            }
+
+            int count = Mathf.Min(allNpcs.Count, namePool.Count);
+            for (int i = 0; i < count; i++)
+                allNpcs[i].SetNameText(namePool[i]);
+
+            _namesAssigned = true;
+        }
+        else
+        {
+            foreach (var npc in allNpcs)
+            {
+                if (!string.IsNullOrEmpty(npc.AssignedName))
+                    npc.SetNameText(npc.AssignedName);
+            }
+        }
+
+        Color lysaColor = day > 4 ? Color.white : Color.gray;
+        foreach (var npc in allNpcs)
+        {
+
+            if (npc.AssignedName == "lysa")
+                npc.SetSpineColor(lysaColor);
         }
     }
 

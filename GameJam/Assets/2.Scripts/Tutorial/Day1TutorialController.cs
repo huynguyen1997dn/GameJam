@@ -283,7 +283,7 @@ public class Day1TutorialController : MonoBehaviour
         ShowDialogForPhase(PhaseId.Forest_01, () =>
         {
             TutorialInputGate.SetAllowedTarget(woodNodeId);
-            tutorialView.ShowObjective("Find wood.");
+            // tutorialView.ShowObjective("Find wood.");
             ShowMapHighlight(woodNodeId);
         });
     }
@@ -293,7 +293,7 @@ public class Day1TutorialController : MonoBehaviour
         TutorialInputGate.BlockAll();
         tutorialView.HideHighlight();
         tutorialView.HideDialogue();
-        tutorialView.ShowObjective("Collect wood.");
+        // tutorialView.ShowObjective("Collect wood.");
     }
 
     private void ShowReturnToBridge()
