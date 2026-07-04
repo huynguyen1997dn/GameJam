@@ -57,8 +57,8 @@ public class MiniGameRoomBridge : MonoBehaviour
         }
 
         _activeNodeId = nodeId;
-        // MiniGameManager.Instance.StartGame(game, miniGameContainer);
-        MiniGameManager.Instance.StartGameWithView(game, miniGameContainer);
+        MiniGameManager.Instance.StartGame(game, miniGameContainer);
+        // MiniGameManager.Instance.StartGameWithView(game, miniGameContainer);
     }
 
     private bool TryGetGameFor(string nodeId, out MiniGameType game)

@@ -14,6 +14,7 @@ public class Day1TutorialUIView : MonoBehaviour
     [SerializeField] private Canvas canvas;
     [SerializeField] private RectTransform root;
     [SerializeField] private Image darkenOverlay;
+    [SerializeField] private Day1TutorialSpotlightOverlay spotlightOverlay;
     [SerializeField] private RectTransform highlightFrame;
     [SerializeField] private RectTransform objectiveRoot;
     [SerializeField] private TextMeshProUGUI objectiveText;
@@ -63,7 +64,7 @@ public class Day1TutorialUIView : MonoBehaviour
         _uiTarget = null;
         _highlightVisible = target != null;
 
-        if (darkenOverlay != null) darkenOverlay.gameObject.SetActive(_highlightVisible);
+        if (!_highlightVisible) SetSpotlightActive(false);
         if (highlightFrame != null) highlightFrame.gameObject.SetActive(_highlightVisible);
         BringToFront();
         RefreshHighlightFrame();
@@ -77,7 +78,7 @@ public class Day1TutorialUIView : MonoBehaviour
         _uiTarget = target;
         _highlightVisible = target != null;
 
-        if (darkenOverlay != null) darkenOverlay.gameObject.SetActive(_highlightVisible);
+        if (!_highlightVisible) SetSpotlightActive(false);
         if (highlightFrame != null) highlightFrame.gameObject.SetActive(_highlightVisible);
         BringToFront();
         RefreshHighlightFrame();
@@ -89,7 +90,7 @@ public class Day1TutorialUIView : MonoBehaviour
         _uiTarget = null;
         _highlightVisible = false;
 
-        if (darkenOverlay != null) darkenOverlay.gameObject.SetActive(false);
+        SetSpotlightActive(false);
         if (highlightFrame != null) highlightFrame.gameObject.SetActive(false);
     }
 
@@ -253,12 +254,18 @@ public class Day1TutorialUIView : MonoBehaviour
         if (!TryGetTargetRect(out var center, out var size))
         {
             highlightFrame.gameObject.SetActive(false);
+            SetSpotlightActive(false);
             return;
         }
 
+        var paddedSize = size + highlightPadding;
+
         highlightFrame.gameObject.SetActive(true);
         highlightFrame.anchoredPosition = center;
-        highlightFrame.sizeDelta = size + highlightPadding;
+        highlightFrame.sizeDelta = paddedSize;
+
+        if (spotlightOverlay != null) spotlightOverlay.SetCutout(center, paddedSize);
+        SetSpotlightActive(true);
     }
 
     private bool TryGetTargetRect(out Vector2 center, out Vector2 size)
@@ -433,9 +440,24 @@ public class Day1TutorialUIView : MonoBehaviour
         Stretch(root);
         root.SetAsLastSibling();
 
-        if (darkenOverlay == null) darkenOverlay = CreateImage("DarkenOverlay", root, Color.black);
-        Stretch(darkenOverlay.rectTransform);
-        darkenOverlay.raycastTarget = false;
+        if (spotlightOverlay == null)
+            spotlightOverlay = GetComponentInChildren<Day1TutorialSpotlightOverlay>(true);
+        if (spotlightOverlay == null)
+            spotlightOverlay = CreateSpotlightOverlay("SpotlightOverlay", root, Color.black);
+
+        if (spotlightOverlay.transform.parent != root)
+            spotlightOverlay.transform.SetParent(root, false);
+
+        Stretch(spotlightOverlay.rectTransform);
+        spotlightOverlay.transform.SetAsFirstSibling();
+        spotlightOverlay.raycastTarget = false;
+
+        if (darkenOverlay != null)
+        {
+            darkenOverlay.raycastTarget = false;
+            darkenOverlay.gameObject.SetActive(false);
+        }
+
         ApplyDarkOverlayOpacity();
 
         if (highlightFrame == null) highlightFrame = CreateHighlightFrame(root);
@@ -476,6 +498,16 @@ public class Day1TutorialUIView : MonoBehaviour
 
     private void ApplyDarkOverlayOpacity()
     {
+        if (spotlightOverlay != null)
+        {
+            Color spotlightColor = spotlightOverlay.color;
+            spotlightColor.r = 0f;
+            spotlightColor.g = 0f;
+            spotlightColor.b = 0f;
+            spotlightColor.a = darkOverlayOpacity;
+            spotlightOverlay.color = spotlightColor;
+        }
+
         if (darkenOverlay == null) return;
 
         Color color = darkenOverlay.color;
@@ -567,7 +599,6 @@ public class Day1TutorialUIView : MonoBehaviour
         CreateFrameEdge("Right", frame, false, true);
 
         // TODO: Add pulsing ring around highlighted target.
-        // TODO: Add soft spotlight/cutout mask.
         // TODO: Add arrow pointer toward highlighted target.
         // TODO: Add smooth fade in/out for dark overlay.
         // TODO: Add small bounce animation on target node.
@@ -621,6 +652,16 @@ public class Day1TutorialUIView : MonoBehaviour
         return image;
     }
 
+    private Day1TutorialSpotlightOverlay CreateSpotlightOverlay(string name, RectTransform parent, Color color)
+    {
+        var overlayObject = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Day1TutorialSpotlightOverlay));
+        overlayObject.transform.SetParent(parent, false);
+
+        var overlay = overlayObject.GetComponent<Day1TutorialSpotlightOverlay>();
+        overlay.color = color;
+        return overlay;
+    }
+
     private TextMeshProUGUI CreateText(string name, RectTransform parent, float fontSize, FontStyles style,
         TextAlignmentOptions alignment)
     {
@@ -657,5 +698,16 @@ public class Day1TutorialUIView : MonoBehaviour
     private void BringToFront()
     {
         if (root != null) root.SetAsLastSibling();
+    }
+
+    private void SetSpotlightActive(bool active)
+    {
+        if (spotlightOverlay != null)
+        {
+            if (!active) spotlightOverlay.ClearCutout();
+            spotlightOverlay.gameObject.SetActive(active);
+        }
+
+        if (darkenOverlay != null) darkenOverlay.gameObject.SetActive(active && spotlightOverlay == null);
     }
 }
