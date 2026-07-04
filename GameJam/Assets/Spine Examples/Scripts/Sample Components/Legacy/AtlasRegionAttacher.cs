@@ -2,7 +2,7 @@
  * Spine Runtimes License Agreement
  * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2025, Esoteric Software LLC
+ * Copyright (c) 2013-2026, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -55,25 +55,28 @@ namespace Spine.Unity.Examples {
 			if (skeletonRenderer.valid) Apply(skeletonRenderer);
 		}
 
-		void Apply (SkeletonRenderer skeletonRenderer) {
+		void Apply (ISkeletonRenderer skeletonRenderer) {
 			if (!this.enabled) return;
 
 			atlas = atlasAsset.GetAtlas();
 			if (atlas == null) return;
-			float scale = skeletonRenderer.skeletonDataAsset.scale;
+			float scale = skeletonRenderer.SkeletonDataAsset.scale;
 
 			foreach (SlotRegionPair entry in attachments) {
 				Slot slot = skeletonRenderer.Skeleton.FindSlot(entry.slot);
-				Attachment originalAttachment = slot.Attachment;
+				var slotPose = slot.AppliedPose;
+				Attachment originalAttachment = slotPose.Attachment;
 				AtlasRegion region = atlas.FindRegion(entry.region);
 
 				if (region == null) {
-					slot.Attachment = null;
+					slotPose.Attachment = null;
 				} else if (inheritProperties && originalAttachment != null) {
-					slot.Attachment = originalAttachment.GetRemappedClone(region, true, true, scale);
+					Attachment newAttachment = originalAttachment.Copy();
+					newAttachment.SetRegion(region, true, scale);
+					slotPose.Attachment = newAttachment;
 				} else {
 					RegionAttachment newRegionAttachment = region.ToRegionAttachment(region.name, scale);
-					slot.Attachment = newRegionAttachment;
+					slotPose.Attachment = newRegionAttachment;
 				}
 			}
 		}

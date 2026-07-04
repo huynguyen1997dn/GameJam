@@ -158,22 +158,23 @@ public class NPCBehaviorManager : Singleton<NPCBehaviorManager>
                 (namePool[i], namePool[swap]) = (namePool[swap], namePool[i]);
             }
 
-            int count = Mathf.Min(allNpcs.Count, namePool.Count);
-            for (int i = 0; i < count; i++)
-                allNpcs[i].SetNameText(namePool[i]);
-
-            for (int i = 0; i < count; i++)
+            int poolIndex = 0;
+            foreach (var npc in allNpcs)
             {
-                if (allNpcs[i].NPCType == NPCType.LittleGirl)
+                if (npc.NPCType == NPCType.LittleGirl)
                 {
-                    allNpcs[i].SetNameText(NPCController.NPC_LITTLE_GIRL);
+                    npc.SetNameText(NPCController.NPC_LITTLE_GIRL);
                 }
-                if (allNpcs[i].NPCType == NPCType.Elder)
+                else if (npc.NPCType == NPCType.Elder)
                 {
-                    allNpcs[i].SetNameText(NPCController.NPC_OLD_MAIN);
+                    npc.SetNameText(NPCController.NPC_OLD_MAIN);
+                }
+                else if (poolIndex < namePool.Count)
+                {
+                    npc.SetNameText(namePool[poolIndex]);
+                    poolIndex++;
                 }
             }
-            
 
             _namesAssigned = true;
         }

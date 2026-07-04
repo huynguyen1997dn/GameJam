@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6845059611078020146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e3e95a05e4c9774397eeeb7bdee8ccb, type: 3}
+  m_Name: 3.Run
+  m_EditorClassIdentifier: spine-unity::Spine.Unity.AnimationReferenceAsset
+  skeletonDataAsset: {fileID: 11400000, guid: 1497181f016b6446990f07396d2ac0c0, type: 2}
+  animationName: 3.Run
+--- !u!114 &-778882430188322540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e3e95a05e4c9774397eeeb7bdee8ccb, type: 3}
+  m_Name: 3.Run2
+  m_EditorClassIdentifier: spine-unity::Spine.Unity.AnimationReferenceAsset
+  skeletonDataAsset: {fileID: 11400000, guid: 1497181f016b6446990f07396d2ac0c0, type: 2}
+  animationName: 3.Run2
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f30f83b4b98ce44cbae81286c0efac1, type: 3}
+  m_Name: tach 2_AnimationReferences
+  m_EditorClassIdentifier: spine-unity::Spine.Unity.AnimationReferenceAssetContainer
+  skeletonDataAsset: {fileID: 11400000, guid: 1497181f016b6446990f07396d2ac0c0, type: 2}
+--- !u!114 &1132379893279555006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e3e95a05e4c9774397eeeb7bdee8ccb, type: 3}
+  m_Name: 2.Walk
+  m_EditorClassIdentifier: spine-unity::Spine.Unity.AnimationReferenceAsset
+  skeletonDataAsset: {fileID: 11400000, guid: 1497181f016b6446990f07396d2ac0c0, type: 2}
+  animationName: 2.Walk
+--- !u!114 &3178647430872556020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e3e95a05e4c9774397eeeb7bdee8ccb, type: 3}
+  m_Name: animation
+  m_EditorClassIdentifier: spine-unity::Spine.Unity.AnimationReferenceAsset
+  skeletonDataAsset: {fileID: 11400000, guid: 1497181f016b6446990f07396d2ac0c0, type: 2}
+  animationName: animation
+--- !u!114 &6119709680825947709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e3e95a05e4c9774397eeeb7bdee8ccb, type: 3}
+  m_Name: 1.Idle
+  m_EditorClassIdentifier: spine-unity::Spine.Unity.AnimationReferenceAsset
+  skeletonDataAsset: {fileID: 11400000, guid: 1497181f016b6446990f07396d2ac0c0, type: 2}
+  animationName: 1.Idle
+--- !u!114 &8236664380750374427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e3e95a05e4c9774397eeeb7bdee8ccb, type: 3}
+  m_Name: 1.Idle2
+  m_EditorClassIdentifier: spine-unity::Spine.Unity.AnimationReferenceAsset
+  skeletonDataAsset: {fileID: 11400000, guid: 1497181f016b6446990f07396d2ac0c0, type: 2}
+  animationName: 1.Idle2

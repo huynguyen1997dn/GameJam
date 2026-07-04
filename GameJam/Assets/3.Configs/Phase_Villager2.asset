@@ -14,24 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogPhaseSO
   phaseId: 10
   entries:
-  - characterId: 3
-    description: "Stranger\u2026 are you the one they found at the edge of the forest?"
-  - characterId: 1
-    description: "Yes. I got lost. I\u2019m looking for a way out of the village."
-  - characterId: 3
+  - characterId: 6
     description: The way out is not easy to find. The forest only opens its path
       when the village remembers who it is.
   - characterId: 1
     description: What do you mean?
-  - characterId: 3
+  - characterId: 6
     description: "There used to be a <b>Resident List</b> in this house. Every villager\u2019s
-      name was written on it. But now\u2026 they are disappearing."
+      name was written on it. But now\u2026 they are disappearing.\n"
   - characterId: 1
     description: You want me to restore the list?
-  - characterId: 3
-    description: If you help the village remember those names, perhaps the way out
-      will appear again.
-  - characterId: 1
-    description: Where should I start?
-  - characterId: 3
+  - characterId: 6
     description: Find the old paper fragments in this house and restore them.

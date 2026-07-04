@@ -35,11 +35,11 @@ public static class DialogSetupEditor
     {
         var list = new[]
         {
-            (CharacterId.Boy, "Boy", Color.cyan),
-            (CharacterId.Girl, "Girl", Color.magenta),
-            (CharacterId.OldMan, "Old Man", Color.yellow),
-            (CharacterId.Witch, "Witch", Color.green),
-            (CharacterId.Monster, "Monster", Color.red),
+            (CharacterId.None, "Boy", Color.cyan),
+            // (CharacterId.Girl, "Girl", Color.magenta),
+            // (CharacterId.OldMan, "Old Man", Color.yellow),
+            // (CharacterId.Witch, "Witch", Color.green),
+            // (CharacterId.Monster, "Monster", Color.red),
         };
 
         foreach (var (id, name, color) in list)
@@ -57,24 +57,24 @@ public static class DialogSetupEditor
         // Phase Intro
         var intro = ScriptableObject.CreateInstance<DialogPhaseSO>();
         intro.phaseId = PhaseId.Intro;
-        intro.entries = new List<DialogEntry>
-        {
-            new() { characterId = CharacterId.Boy, description = "Hello! Welcome to the forest." },
-            new() { characterId = CharacterId.Girl, description = "Be careful, there are monsters around!" },
-            new() { characterId = CharacterId.Boy, description = "I'll protect you!" },
-        };
-        AssetDatabase.CreateAsset(intro, $"{PopupDir}Phase_Intro.asset");
-
-        // Phase Forest_01
-        var f1 = ScriptableObject.CreateInstance<DialogPhaseSO>();
-        f1.phaseId = PhaseId.Forest_01;
-        f1.entries = new List<DialogEntry>
-        {
-            new() { characterId = CharacterId.OldMan, description = "Traveler, are you lost?" },
-            new() { characterId = CharacterId.Boy, description = "Yes! Can you help us find the way out?" },
-            new() { characterId = CharacterId.OldMan, description = "Follow the river east. It will lead you to the village." },
-        };
-        AssetDatabase.CreateAsset(f1, $"{PopupDir}Phase_Forest_01.asset");
+        // intro.entries = new List<DialogEntry>
+        // {
+        //     new() { characterId = CharacterId.Boy, description = "Hello! Welcome to the forest." },
+        //     new() { characterId = CharacterId.Girl, description = "Be careful, there are monsters around!" },
+        //     new() { characterId = CharacterId.Boy, description = "I'll protect you!" },
+        // };
+        // AssetDatabase.CreateAsset(intro, $"{PopupDir}Phase_Intro.asset");
+        //
+        // // Phase Forest_01
+        // var f1 = ScriptableObject.CreateInstance<DialogPhaseSO>();
+        // f1.phaseId = PhaseId.Forest_01;
+        // f1.entries = new List<DialogEntry>
+        // {
+        //     new() { characterId = CharacterId.OldMan, description = "Traveler, are you lost?" },
+        //     new() { characterId = CharacterId.Boy, description = "Yes! Can you help us find the way out?" },
+        //     new() { characterId = CharacterId.OldMan, description = "Follow the river east. It will lead you to the village." },
+        // };
+        // AssetDatabase.CreateAsset(f1, $"{PopupDir}Phase_Forest_01.asset");
     }
 
     private static void CreateDatabase()

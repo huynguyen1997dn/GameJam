@@ -2,7 +2,7 @@
  * Spine Runtimes License Agreement
  * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2025, Esoteric Software LLC
+ * Copyright (c) 2013-2026, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -105,8 +105,12 @@ namespace Spine.Unity.Examples {
 			referenceMeshFilter = referenceRenderer.GetComponent<MeshFilter>();
 
 			// subscribe to OnMeshAndMaterialsUpdated
-			SkeletonAnimation skeletonRenderer = referenceRenderer.GetComponent<SkeletonAnimation>();
-			if (skeletonRenderer) {
+#if UNITY_2019_4_OR_NEWER
+			ISkeletonRenderer skeletonRenderer = referenceRenderer.GetComponent<ISkeletonRenderer>();
+#else
+			SkeletonAnimationBase skeletonRenderer = referenceRenderer.GetComponent<SkeletonAnimationBase>();
+#endif
+			if (skeletonRenderer != null) {
 				skeletonRenderer.OnMeshAndMaterialsUpdated -= UpdateOnCallback;
 				skeletonRenderer.OnMeshAndMaterialsUpdated += UpdateOnCallback;
 				updateViaSkeletonCallback = true;
@@ -141,14 +145,18 @@ namespace Spine.Unity.Examples {
 			UpdateMaterials();
 		}
 
-		void UpdateOnCallback (SkeletonRenderer r) {
+		void UpdateOnCallback (ISkeletonRenderer r) {
 			UpdateMaterials();
 		}
 
 		void UpdateMaterials () {
 #if UNITY_EDITOR
 			if (!referenceRenderer) return;
-			if (!referenceMeshFilter) Reset();
+			if (!referenceMeshFilter) {
+				referenceMeshFilter = referenceRenderer.GetComponent<MeshFilter>();
+				if (!referenceMeshFilter)
+					Reset();
+			}
 #endif
 			ownMeshFilter.sharedMesh = referenceMeshFilter.sharedMesh;
 

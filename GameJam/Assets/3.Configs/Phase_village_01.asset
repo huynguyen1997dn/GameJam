@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogPhaseSO
   phaseId: 4
   entries:
-  - characterId: 3
-    description: "A trace was recorded.\nOpen the Journal before the day ends."
+  - characterId: 2
+    description: 'A trace was recorded.
+
+      Open the Journal before the day ends.'

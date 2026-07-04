@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d0d4d6a554ef425697082ee822f0ee4, type: 3}
+  m_Name: Char_Npc2_Sad
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterDataSO
+  characterId: 5
+  displayName: 'LittleGirlCries '
+  icon: {fileID: -6698303109885417897, guid: 951aa9e7a3f634bdabd81bfde2932a82, type: 3}
+  nameColor: {r: 0.8207547, g: 0.019357419, b: 0.764069, a: 1}

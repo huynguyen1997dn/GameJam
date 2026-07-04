@@ -2,7 +2,7 @@
  * Spine Runtimes License Agreement
  * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2025, Esoteric Software LLC
+ * Copyright (c) 2013-2026, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -27,24 +27,36 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
+#if !SPINE_AUTO_UPGRADE_COMPONENTS_OFF
+#define AUTO_UPGRADE_TO_43_COMPONENTS
+#endif
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Spine.Unity.Examples {
-	public class SkeletonGraphicMirror : MonoBehaviour {
+	public class SkeletonGraphicMirror : MonoBehaviour, IUpgradable {
 
 		public SkeletonRenderer source;
 		public bool mirrorOnStart = true;
 		public bool restoreOnDisable = true;
 		SkeletonGraphic skeletonGraphic;
+		SkeletonAnimation skeletonAnimation;
 
 		Skeleton originalSkeleton;
 		bool originalFreeze;
 		Texture2D overrideTexture;
 
 		private void Awake () {
+#if UNITY_EDITOR && AUTO_UPGRADE_TO_43_COMPONENTS
+			if (!Application.isPlaying && !wasUpgradedTo43) {
+				UpgradeTo43();
+			}
+#endif
 			skeletonGraphic = GetComponent<SkeletonGraphic>();
+			skeletonAnimation = GetComponent<SkeletonAnimation>();
 		}
 
 		void Start () {
@@ -68,15 +80,16 @@ namespace Spine.Unity.Examples {
 			if (skeletonGraphic == null)
 				return;
 
-			skeletonGraphic.startingAnimation = string.Empty;
+			if (skeletonAnimation)
+				skeletonAnimation.AnimationName = string.Empty;
 
 			if (originalSkeleton == null) {
 				originalSkeleton = skeletonGraphic.Skeleton;
-				originalFreeze = skeletonGraphic.freeze;
+				originalFreeze = skeletonGraphic.Freeze;
 			}
 
 			skeletonGraphic.Skeleton = source.skeleton;
-			skeletonGraphic.freeze = true;
+			skeletonGraphic.Freeze = true;
 			if (overrideTexture != null)
 				skeletonGraphic.OverrideTexture = overrideTexture;
 		}
@@ -99,6 +112,23 @@ namespace Spine.Unity.Examples {
 
 			originalSkeleton = null;
 		}
+
+		#region Transfer of Deprecated Fields
+#if UNITY_EDITOR && AUTO_UPGRADE_TO_43_COMPONENTS
+		public virtual void UpgradeTo43 () {
+			wasUpgradedTo43 = true;
+			if (source == null) {
+				Component previousReference = previousSource != null ? previousSource : this;
+				source = previousReference.GetComponent<SkeletonRenderer>();
+				if (source == null)
+					Debug.LogError("Please manually re-assign SkeletonRenderer source at SkeletonGraphicMirror, " +
+						"automatic upgrade failed.", this);
+			}
+		}
+		[SerializeField, HideInInspector, FormerlySerializedAs("source")] Component previousSource;
+		[SerializeField] protected bool wasUpgradedTo43 = false;
+#endif
+		#endregion
 	}
 
 }

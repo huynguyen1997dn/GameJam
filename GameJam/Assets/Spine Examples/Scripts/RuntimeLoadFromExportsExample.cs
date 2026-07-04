@@ -2,7 +2,7 @@
  * Spine Runtimes License Agreement
  * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2025, Esoteric Software LLC
+ * Copyright (c) 2013-2026, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -81,7 +81,9 @@ namespace Spine.Unity.Examples {
 		}
 
 		void InstantiateSkeletonAnimation () {
-			runtimeSkeletonAnimation = SkeletonAnimation.NewSkeletonAnimationGameObject(runtimeSkeletonDataAsset);
+			SkeletonComponents<SkeletonRenderer, SkeletonAnimation> components
+				= SkeletonAnimation.NewSkeletonAnimationGameObject(runtimeSkeletonDataAsset);
+			runtimeSkeletonAnimation = components.skeletonAnimation;
 			runtimeSkeletonAnimation.transform.parent = transform;
 			runtimeSkeletonAnimation.name = "SkeletonAnimation Instance";
 
@@ -89,7 +91,7 @@ namespace Spine.Unity.Examples {
 			runtimeSkeletonAnimation.Initialize(false);
 			if (skinName != "")
 				runtimeSkeletonAnimation.Skeleton.SetSkin(skinName);
-			runtimeSkeletonAnimation.Skeleton.SetSlotsToSetupPose();
+			runtimeSkeletonAnimation.Skeleton.SetupPoseSlots();
 			if (animationName != "")
 				runtimeSkeletonAnimation.AnimationState.SetAnimation(0, animationName, true);
 		}
@@ -98,7 +100,9 @@ namespace Spine.Unity.Examples {
 			Canvas canvas = this.GetComponentInChildren<Canvas>();
 			Transform parent = canvas.transform;
 
-			runtimeSkeletonGraphic = SkeletonGraphic.NewSkeletonGraphicGameObject(runtimeSkeletonDataAsset, parent, skeletonGraphicMaterial);
+			SkeletonComponents<SkeletonGraphic, SkeletonAnimation> components =
+				SkeletonGraphic.NewSkeletonGraphicGameObject(runtimeSkeletonDataAsset, parent, skeletonGraphicMaterial);
+			runtimeSkeletonGraphic = components.skeletonRenderer;
 			runtimeSkeletonGraphic.name = "SkeletonGraphic Instance";
 
 			if (blendModeMaterials) {
@@ -112,9 +116,9 @@ namespace Spine.Unity.Examples {
 			runtimeSkeletonGraphic.Initialize(false);
 			if (skinName != "")
 				runtimeSkeletonGraphic.Skeleton.SetSkin(skinName);
-			runtimeSkeletonGraphic.Skeleton.SetSlotsToSetupPose();
+			runtimeSkeletonGraphic.Skeleton.SetupPoseSlots();
 			if (animationName != "")
-				runtimeSkeletonGraphic.AnimationState.SetAnimation(0, animationName, true);
+				components.skeletonAnimation.AnimationState.SetAnimation(0, animationName, true);
 		}
 	}
 }

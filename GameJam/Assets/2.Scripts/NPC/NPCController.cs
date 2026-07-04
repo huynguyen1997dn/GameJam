@@ -18,7 +18,7 @@ public class NPCController : MonoBehaviour
     private Coroutine _wanderRoutine;
     private string _assignedName;
 
-    public static readonly string[] NPC_NAMES = { "aila", "borin", "cora", "edda", "finn", "milo", "nora" };
+    public static readonly string[] NPC_NAMES = { "aila", "cora", "edda", "finn", "milo", "nora" };
     public static readonly string NPC_LITTLE_GIRL = "lysa";
     public static readonly string NPC_OLD_MAIN = "borin";
 
