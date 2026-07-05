@@ -11,4 +11,5 @@ public enum PhaseId
     Day2Reveal,
     Villager1,
     Villager2,
+    Ending,
 }
