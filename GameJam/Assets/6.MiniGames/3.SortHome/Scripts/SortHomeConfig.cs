@@ -10,9 +10,9 @@ public class SortHomeConfig : ScriptableObject
     {
         [Tooltip("Sprite for this item")]
         public Sprite sprite;
-        [Tooltip("Target home position (local position relative to manager)")]
+        [Tooltip("Target home position on the source sprite at scale 1 - scaled with the background at runtime")]
         public Vector2 homePosition;
-        [Tooltip("Uniform scale for this item and its slot. 0 = auto scale from puzzleSize (default)")]
+        [Tooltip("Scale multiplier relative to the background scale. 0 = same scale as background (default)")]
         public float scale = 0f;
     }
 

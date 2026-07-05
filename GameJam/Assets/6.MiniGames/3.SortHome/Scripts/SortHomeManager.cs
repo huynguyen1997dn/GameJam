@@ -12,6 +12,8 @@ public class SortHomeManager : MiniGameBase
     private int _placedCount;
     private bool _isGameOver;
     private SpriteRenderer _bgImage;
+    private SortHomeItem _draggedItem;
+    private float _mapScale = 1f;
 
     public SortHomeConfig Config => _config;
     public bool IsGameOver => _isGameOver;
@@ -23,10 +25,74 @@ public class SortHomeManager : MiniGameBase
     {
         if (!_cam) _cam = Camera.main;
         if (!ValidateConfig()) return;
+
+        // Items are authored at the same pixel density as the source sprite,
+        // so everything shares the background's scale factor.
+        _mapScale = _config.sourceSprite != null
+            ? _config.puzzleSize / _config.sourceSprite.bounds.size.x
+            : 1f;
+
         CreateBackdrop();
         CreateBackground();
         CreatePlaceholders();
         SpawnItems();
+    }
+
+    private void Update()
+    {
+        if (_isGameOver) return;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 pointerPos = GetPointerWorldPos();
+            _draggedItem = PickItemAt(pointerPos);
+            _draggedItem?.BeginDrag(pointerPos);
+        }
+        else if (_draggedItem != null)
+        {
+            if (Input.GetMouseButton(0))
+            {
+                _draggedItem.Drag(GetPointerWorldPos());
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                _draggedItem.EndDrag();
+                _draggedItem = null;
+            }
+        }
+    }
+
+    // Picks the smallest unplaced item under the pointer, so overlapping
+    // big sprites can't steal touches aimed at small ones.
+    private SortHomeItem PickItemAt(Vector2 worldPos)
+    {
+        Physics2D.SyncTransforms();
+
+        SortHomeItem best = null;
+        float bestArea = float.MaxValue;
+        foreach (var item in _items)
+        {
+            if (item == null || item.IsPlaced || !item.isActiveAndEnabled) continue;
+            if (!item.ContainsPoint(worldPos)) continue;
+
+            float area = item.TouchArea;
+            if (area < bestArea)
+            {
+                best = item;
+                bestArea = area;
+            }
+        }
+        return best;
+    }
+
+    private Vector3 GetPointerWorldPos()
+    {
+        Vector3 screenPos = Input.mousePosition;
+        screenPos.z = Mathf.Abs(_cam.transform.position.z - transform.position.z);
+        Vector3 worldPos = _cam.ScreenToWorldPoint(screenPos);
+        worldPos.z = transform.position.z;
+        return worldPos;
     }
 
     private bool ValidateConfig()
@@ -93,8 +159,7 @@ public class SortHomeManager : MiniGameBase
         _bgImage.sprite = _config.sourceSprite;
         _bgImage.sortingOrder = -10;
 
-        float scale = _config.puzzleSize / _config.sourceSprite.bounds.size.x;
-        bgGO.transform.localScale = new Vector3(scale, scale, 1);
+        bgGO.transform.localScale = new Vector3(_mapScale, _mapScale, 1);
     }
 
     private void CreatePlaceholders()
@@ -108,8 +173,8 @@ public class SortHomeManager : MiniGameBase
             if (_config.slotPrefab != null)
             {
                 slotGO = Instantiate(_config.slotPrefab, transform);
-                if (slot.scale > 0f)
-                    slotGO.transform.localScale = new Vector3(slot.scale, slot.scale, 1);
+                float s = GetSlotScale(slot);
+                slotGO.transform.localScale = new Vector3(s, s, 1);
             }
             else
             {
@@ -129,16 +194,16 @@ public class SortHomeManager : MiniGameBase
                 slotGO.transform.localScale = new Vector3(s, s, 1);
             }
 
-            slotGO.transform.localPosition = slot.homePosition;
+            slotGO.transform.localPosition = slot.homePosition * _mapScale;
             _slots.Add(slotGO);
         }
     }
 
-    // Per-slot override when set; otherwise the original auto scale from puzzleSize.
+    // Items scale with the background so their authored size relative to the
+    // source sprite is preserved. Per-slot scale acts as a multiplier on top.
     private float GetSlotScale(SortHomeConfig.ItemSlot slot)
     {
-        if (slot.scale > 0f) return slot.scale;
-        return _config.puzzleSize / slot.sprite.bounds.size.x * 0.5f;
+        return slot.scale > 0f ? _mapScale * slot.scale : _mapScale;
     }
 
     private void SpawnItems()
@@ -157,7 +222,8 @@ public class SortHomeManager : MiniGameBase
             float itemScale = GetSlotScale(slot);
             go.transform.localScale = new Vector3(itemScale, itemScale, 1);
 
-            Vector3 targetPos = slot.homePosition;
+            // Authored on the scale-1 source sprite; scaled with the background.
+            Vector3 targetPos = slot.homePosition * _mapScale;
 
             Vector2 randomDir = Random.insideUnitCircle.normalized *
                 Random.Range(_config.scatterRadius * 0.5f, _config.scatterRadius);
@@ -174,8 +240,6 @@ public class SortHomeManager : MiniGameBase
             go.name = $"Item_{i}";
             item.Init(this, slot.sprite, targetPos, scatterPos);
             item.FitColliderToSprite();
-
-            item.setCamera(_cam);
             _items.Add(item);
         }
     }
