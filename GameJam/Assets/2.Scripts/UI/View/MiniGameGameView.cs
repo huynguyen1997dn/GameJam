@@ -37,6 +37,8 @@ public abstract class MiniGameGameView : ViewBase
     protected  virtual void  OnPreGameComplete()
     {
         _completeButton.gameObject.SetActive(true);
+        if (_progressText != null)
+            _progressText.text = "Complete";
     }
 
     protected virtual void OnDisable()

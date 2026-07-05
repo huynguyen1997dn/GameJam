@@ -32,6 +32,52 @@ public class TheDarkForestManager : MiniGameBase
         SpawnAllRows();
     }
 
+    // Trees react on pointer down (no click-release wait) and only the current
+    // row is tested, so back rows can never steal the tap.
+    private void Update()
+    {
+        if (_isGameOver) return;
+        if (!Input.GetMouseButtonDown(0)) return;
+
+        TheDarkForestTree tree = PickTreeAt(GetPointerWorldPos());
+        if (tree != null)
+        {
+            OnTreeClicked(tree);
+        }
+    }
+
+    private TheDarkForestTree PickTreeAt(Vector2 worldPos)
+    {
+        Physics2D.SyncTransforms();
+
+        TheDarkForestTree best = null;
+        float bestDist = float.MaxValue;
+        foreach (var tree in _allTrees)
+        {
+            if (tree == null || !tree.isActiveAndEnabled) continue;
+            if (tree.RowIndex != _currentRow) continue;
+            if (!tree.ContainsPoint(worldPos)) continue;
+
+            // Overlapping neighbors: the tree whose trunk is closest wins.
+            float dist = Mathf.Abs(tree.transform.position.x - worldPos.x);
+            if (dist < bestDist)
+            {
+                best = tree;
+                bestDist = dist;
+            }
+        }
+        return best;
+    }
+
+    private Vector3 GetPointerWorldPos()
+    {
+        Vector3 screenPos = Input.mousePosition;
+        screenPos.z = Mathf.Abs(_cam.transform.position.z - transform.position.z);
+        Vector3 worldPos = _cam.ScreenToWorldPoint(screenPos);
+        worldPos.z = transform.position.z;
+        return worldPos;
+    }
+
     private bool ValidateConfig()
     {
         if (_config == null)
@@ -182,8 +228,10 @@ public class TheDarkForestManager : MiniGameBase
     {
         _currentRow++;
 
+        // Target is the live row count - penalty rows added by mistakes grow it,
+        // so progress can never read past the total (e.g. "7/5").
         EventDispatcher.Dispatch(EventId.MiniGameProgressUpdate,
-            new MiniGameProgressData { gameType = MiniGameType.TheDarkForest, current = _currentRow, target = _config.rows });
+            new MiniGameProgressData { gameType = MiniGameType.TheDarkForest, current = _currentRow, target = _totalRows });
 
         if (_currentRow >= _totalRows)
         {

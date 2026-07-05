@@ -1,8 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class TheDarkForestTree : MonoBehaviour, IPointerClickHandler
+public class TheDarkForestTree : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer _sprite;
     [SerializeField] private BoxCollider2D _collider;
@@ -37,8 +36,15 @@ public class TheDarkForestTree : MonoBehaviour, IPointerClickHandler
     {
         if (_sprite != null && _sprite.sprite != null && _collider != null)
         {
-            _collider.size = new Vector2(2, 12);
+            _collider.size = _sprite.sprite.bounds.size;
+            _collider.offset = _sprite.sprite.bounds.center;
         }
+    }
+
+    public bool ContainsPoint(Vector2 worldPoint)
+    {
+        return !_isChopped && _collider != null && _collider.enabled
+            && _collider.OverlapPoint(worldPoint);
     }
 
     public void ChopCorrect()
@@ -80,12 +86,6 @@ public class TheDarkForestTree : MonoBehaviour, IPointerClickHandler
         _isChopped = true;
         _collider.enabled = false;
         gameObject.SetActive(false);
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (_isChopped || _manager == null) return;
-        _manager.OnTreeClicked(this);
     }
 
     private void OnValidate()
