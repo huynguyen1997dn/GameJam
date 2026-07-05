@@ -1,0 +1,57 @@
+tach 22.png
+size:400,285
+filter:Linear,Linear
+pma:true
+Ban chan T
+bounds:105,3,64,43
+offsets:1,1,66,45
+Ban chanP
+bounds:171,3,64,43
+offsets:1,1,66,45
+Ban tay P
+bounds:359,15,34,37
+offsets:1,1,36,39
+Bap Tay T
+bounds:2,2,56,68
+offsets:1,1,58,70
+rotate:90
+Bap tay P
+bounds:106,56,57,69
+offsets:2,2,60,72
+Cang tay P
+bounds:350,230,48,53
+offsets:1,1,50,55
+Cang tay T
+bounds:350,177,48,51
+offsets:1,1,50,53
+Chan P
+bounds:2,60,65,102
+rotate:90
+Chan T
+bounds:294,54,77,109
+Cov
+bounds:373,140,22,35
+offsets:1,1,24,37
+Layer 6
+bounds:277,165,118,71
+offsets:1,1,120,73
+rotate:90
+Layer 7
+bounds:237,13,33,35
+offsets:1,1,35,37
+rotate:90
+Than duoi
+bounds:165,48,127,98
+Than tren
+bounds:165,148,135,110
+rotate:90
+Toc con
+bounds:72,23,31,35
+offsets:3,1,35,38
+Tui
+bounds:294,3,49,63
+offsets:1,1,51,65
+rotate:90
+dau
+bounds:2,127,161,156
+offsets:7,2,174,162

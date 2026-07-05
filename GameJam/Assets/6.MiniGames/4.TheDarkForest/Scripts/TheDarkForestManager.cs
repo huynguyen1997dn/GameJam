@@ -185,6 +185,8 @@ public class TheDarkForestManager : MiniGameBase
 
     public void OnTreeClicked(TheDarkForestTree tree)
     {
+        Debug.LogError($"OnTreeClicked ");
+
         if (_isGameOver) return;
         if (tree.RowIndex != _currentRow) return;
 

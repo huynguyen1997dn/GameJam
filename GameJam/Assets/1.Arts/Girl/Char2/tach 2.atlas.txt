@@ -1,0 +1,63 @@
+tach 2.png
+size:206,746
+filter:Linear,Linear
+pma:true
+Ban chan T
+bounds:144,158,69,53
+offsets:1,1,71,55
+rotate:90
+Ban chanP
+bounds:149,341,71,55
+offsets:1,1,73,57
+rotate:90
+Ban tay P
+bounds:164,482,34,38
+offsets:2,1,38,40
+rotate:90
+Bap Tay T
+bounds:135,75,65,81
+offsets:2,1,69,83
+Bap tay P
+bounds:123,11,62,79
+offsets:1,1,64,81
+rotate:90
+Cang tay P
+bounds:144,229,56,50
+offsets:1,1,58,52
+Cang tay T
+bounds:149,281,54,58
+offsets:1,1,56,60
+Chan P
+bounds:2,53,73,100
+rotate:90
+Chan T
+bounds:2,128,94,131
+rotate:90
+Co
+bounds:164,414,22,35
+offsets:1,1,24,37
+rotate:90
+Huy hieu
+bounds:104,79,27,47
+Layer 6
+bounds:2,224,140,67
+offsets:1,2,142,70
+Layer 7
+bounds:164,518,38,45
+offsets:1,1,40,47
+Mocs tui
+bounds:104,44,17,33
+Than duoi
+bounds:2,293,145,129
+Than tren
+bounds:2,424,160,139
+Toc con
+bounds:164,438,37,42
+offsets:1,1,39,44
+Tui
+bounds:2,2,49,63
+offsets:1,1,51,65
+rotate:90
+dau
+bounds:2,565,202,179
+offsets:1,2,204,183
