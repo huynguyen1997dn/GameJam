@@ -38,7 +38,7 @@ MonoBehaviour:
   itemPrefab: {fileID: 5081531744578488382, guid: f75f4f3852cc84c1baabdaaa282d3341, type: 3}
   slotPrefab: {fileID: 0}
   puzzleSize: 6
-  scatterRadius: 4
+  scatterRadius: 3
   snapDistance: 0.5
   backgroundSprite: {fileID: 0}
   placeSoundId: AUDIO_PLACE
