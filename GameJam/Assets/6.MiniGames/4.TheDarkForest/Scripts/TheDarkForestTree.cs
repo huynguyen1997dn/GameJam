@@ -27,7 +27,7 @@ public class TheDarkForestTree : MonoBehaviour
 
         _sprite.sprite = sprite;
         _sprite.color = Color.white;
-        _sprite.sortingOrder = Mathf.RoundToInt(-rowIndex);
+        _sprite.sortingOrder = Mathf.RoundToInt(100 - rowIndex);
 
         FitColliderToSprite();
     }
