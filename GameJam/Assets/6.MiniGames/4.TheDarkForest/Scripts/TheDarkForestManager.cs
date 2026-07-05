@@ -24,6 +24,7 @@ public class TheDarkForestManager : MiniGameBase
     {
         if (!_cam) _cam = Camera.main;
         if (!ValidateConfig()) return;
+        _totalRows = _config.rows;
 
         CreateRowsParent();
         CreateDarkOverlay();
@@ -94,6 +95,8 @@ public class TheDarkForestManager : MiniGameBase
 
     private void SpawnAllRows()
     {
+        Debug.LogError("TheDarkForestManager init 1 => " + _totalRows);
+
         for (int r = 0; r < _totalRows; r++)
             SpawnRowAt(r);
     }

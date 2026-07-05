@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6002e416a6f84c1a81f9c46e7c99797, type: 3}
   m_Name: TheDarkForestConfig
   m_EditorClassIdentifier: Assembly-CSharp::TheDarkForestConfig
-  correctTreeSprite: {fileID: -7676587702213029313, guid: ad46d124b3ddd44889d7dde30c85f106, type: 3}
-  wrongTreeSprite: {fileID: -1951726829969289587, guid: 5eaee7c92ce2e400ca2e2c60eb4a0f4f, type: 3}
-  towerSprite: {fileID: 5101669018972630110, guid: 69a01ef465bfe48a7a792f1b29605d68, type: 3}
+  correctTreeSprite: {fileID: 5291054868714166649, guid: d0f4fd9b7ba1d4ced8ee6ad1a0119f08, type: 3}
+  wrongTreeSprite: {fileID: 21300000, guid: 2522b17d7125a4b0bb05b76393fb14a6, type: 3}
+  towerSprite: {fileID: 21300000, guid: b322389bb689a4969b014d5a559a1066, type: 3}
   rows: 5
   treesPerRow: 4
   spacingX: 5

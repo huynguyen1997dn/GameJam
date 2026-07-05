@@ -5024,11 +5024,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5360937881875875937, guid: d62f25fc7619e48aaa80ed9d9f0e214d, type: 3}
       propertyPath: nodeId
-      value: Watchtower
+      value: Darkwood
       objectReference: {fileID: 0}
     - target: {fileID: 5360937881875875937, guid: d62f25fc7619e48aaa80ed9d9f0e214d, type: 3}
       propertyPath: interaction
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5360937881875875937, guid: d62f25fc7619e48aaa80ed9d9f0e214d, type: 3}
       propertyPath: availableFromDay
@@ -7744,7 +7744,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5360937881875875937, guid: d62f25fc7619e48aaa80ed9d9f0e214d, type: 3}
       propertyPath: nodeId
-      value: Darkwood
+      value: _
+      objectReference: {fileID: 0}
+    - target: {fileID: 5360937881875875937, guid: d62f25fc7619e48aaa80ed9d9f0e214d, type: 3}
+      propertyPath: interaction
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5360937881875875937, guid: d62f25fc7619e48aaa80ed9d9f0e214d, type: 3}
       propertyPath: isCosmeticOnly

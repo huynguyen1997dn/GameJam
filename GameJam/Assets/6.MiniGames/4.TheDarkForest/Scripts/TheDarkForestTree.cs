@@ -1,7 +1,8 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class TheDarkForestTree : MonoBehaviour
+public class TheDarkForestTree : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private SpriteRenderer _sprite;
     [SerializeField] private BoxCollider2D _collider;
@@ -22,6 +23,9 @@ public class TheDarkForestTree : MonoBehaviour
         _rowIndex = rowIndex;
         _isChopped = false;
 
+        if (_sprite == null) _sprite = GetComponent<SpriteRenderer>();
+        if (_collider == null) _collider = GetComponent<BoxCollider2D>();
+
         _sprite.sprite = sprite;
         _sprite.color = Color.white;
         _sprite.sortingOrder = Mathf.RoundToInt(-rowIndex);
@@ -33,13 +37,12 @@ public class TheDarkForestTree : MonoBehaviour
     {
         if (_sprite != null && _sprite.sprite != null && _collider != null)
         {
-            _collider.size = new  Vector3(2,12,0);
+            _collider.size = new Vector2(2, 12);
         }
     }
 
     public void ChopCorrect()
     {
-        Debug.LogError("ChopCorrect");
 
         if (_isChopped) return;
         _isChopped = true;
@@ -56,7 +59,6 @@ public class TheDarkForestTree : MonoBehaviour
 
     public void ChopWrong()
     {
-        Debug.LogError("ChopWrong");
         if (_isChopped) return;
         _isChopped = true;
 
@@ -80,7 +82,7 @@ public class TheDarkForestTree : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void OnMouseDown()
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (_isChopped || _manager == null) return;
         _manager.OnTreeClicked(this);

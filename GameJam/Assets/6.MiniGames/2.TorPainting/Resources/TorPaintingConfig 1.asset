@@ -16,7 +16,7 @@ MonoBehaviour:
   pieceCount: 8
   piecePrefab: {fileID: 2627688731880984654, guid: b7239d0b3160e444da74ab99ab65db38, type: 3}
   puzzleSize: 6
-  scatterRadius: 4
+  scatterRadius: 3
   snapDistancePercent: 0.35
   tearAmplitude: 0.12
   tearWhiteWidth: 4
